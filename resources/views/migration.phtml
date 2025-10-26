@@ -1,0 +1,89 @@
+<?php
+/*
+ * …/modules_v4/sosa20/resources/views/migration.phtml
+ * help : https://gustine.eu/mode_emploi/sosa.php
+ * MR 2025-10 each member uses it own Sosa numbers
+ */
+use Fisharebest\Webtrees\Auth;
+use Fisharebest\Webtrees\Functions\FunctionsPrint; 
+use Fisharebest\Webtrees\I18N; 
+use Fisharebest\Webtrees\Individual;
+use Fisharebest\Webtrees\Registry;
+use Fisharebest\Webtrees\Site;
+use Fisharebest\Webtrees\Tree;
+use Fisharebest\Webtrees\View;
+use Illuminate\Database\Capsule\Manager as DB;
+use Illuminate\Database\Schema\Blueprint;
+
+if (!DB::schema()->hasTable('sosa')) {
+	try {
+		DB::schema()->create('sosa', function (Blueprint $table): void {
+			$table->increments('sosa_id');
+			$table->string('sosa_xref', 11);
+			$table->biginteger('sosa_num');
+			$table->integer('sosa_gen');
+			$table->integer('sosa_gid');
+			$table->unique('sosa_id');
+			$table->integer('user_id');
+			});
+		echo I18N::translate('The wt_sosa table does not exist, so we will create it.')  . '<br>';
+	}
+	catch(PDOException $ex) {
+		throw new Exception("⁂ DB already exists. <br>");
+	}
+}
+
+// If sosa table exists, we verify if user_id column exists.
+if (!DB::schema()->hasColumn('sosa', 'user_id')) {
+	// If no user_id (older version of sosa module), we backup data
+       $data = DB::table('sosa')->get();
+	// then drop table
+       DB::schema()->drop('sosa');
+	// and recreate it with new structure.
+	try {
+		DB::schema()->create('sosa', function (Blueprint $table): void {
+			$table->increments('sosa_id');
+			$table->string('sosa_xref', 11);
+			$table->biginteger('sosa_num');
+			$table->integer('sosa_gen');
+			$table->integer('sosa_gid');
+			$table->unique('sosa_id');
+			$table->integer('user_id');
+			});
+		echo I18N::translate('The structure of the wt_sosa table will need to be modified.') . '<br>';
+	}
+	catch(PDOException $ex) {
+		throw new Exception("⁂ new DB already exists. <br>");
+	}
+	// Finally, the data is restored by assigning it to default user (ID-1).
+       foreach ($data as $datum) {
+           DB::table('sosa')->insert([
+               'sosa_xref' => $datum->sosa_xref,
+               'sosa_num' => $datum->sosa_num,
+               'sosa_gen' => $datum->sosa_gen,
+               'sosa_gid' => $datum->sosa_gid,
+               'sosa_id' => $datum->sosa_id,
+               'user_id' => '-1',
+           ]);
+       }
+   }
+
+echo '<div class="wt-main-wrapper">' ;
+	echo '<table class="table wt-facts-table">';
+	echo '<tr><td><h3>' . I18N::translate('Operation successfully completed.') . '</h3>';
+	if ($tree === null) {
+		echo '<span style="color: red">Error</span> (tree === null)'; 
+		}
+	else {
+		$individual = Registry::individualFactory()->make($bk_xref, $tree);
+		if ($title === I18N::translate('Migration')) {
+			echo '<p>' . I18N::translate('The numbers calculated previously are assigned to the default user. They are visible to unregistered users and only an editor can update them.') . '</p>';
+			echo '<p>' . I18N::translate('Each registered user present in the tree will be able to generate numbers relating to them (those of their direct ancestors).') . '</p>';
+		}
+		echo '</td></tr><tr><td>';
+		echo '<h3>' . I18N::translate('Back to the previous page') . ' :</h3>';
+		echo '<a href="' . $individual->url() . '">' . $individual->FullName() . '</a>';
+		}
+	echo '</td></tr></table>';
+echo '</div>';
+
