@@ -1,0 +1,53 @@
+🇬🇧 https://gustine.eu/mode_emploi/sosa-en.php
+
+🇫🇷 https://gustine.eu/mode_emploi/sosa.php
+
+───────────────────────
+sosa20-module-2025-10.zip
+
+🇬🇧 For each connected member linked to an individual in the tree, the Sosa numbers, calculated from that individual, are also displayed.
+Unless img/image.png (ou .webp ou .jpg) is missing.
+A new user_id field is added to the wt_sosa table to pre-calculate and store the numbers for each root.
+When creating the wt_sosa table, the error message “There is no active transaction…” may appear. Ignore it by reloading the page and continue.
+
+🇫🇷 Pour chaque membre connecté et lié à un individu de l’arbre, on affiche également les numéros Sosa, calculés à partir de cet individu.
+Sauf si img/image.png (ou .webp ou .jpg) est absent.
+Un nouveau champ user_id est ajouté à la table wt_sosa afin de pré-calculer et stocker les numéros pour chaque souche.
+Lors de la création de la table wt_sosa, le message d’erreur « There is no active transaction… » peut apparaître. L’ignorer en rechargeant la page et continuer.
+─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─
+🇬🇧 A help page integrated into the module replaces the link to gustine.eu. It informs the user about what they can and cannot do based on their status.
+
+🇫🇷 Une page d’aide intégrée au module remplace le lien vers gustine.eu. Elle renseigne l’utilisateur sur ce qu’il peut faire ou pas en fonction de son statut.
+───────────────────────
+sosa20-variant-2025-06b.zip
+
+🇬🇧 New algorithm slower but less memory-intensive. This allows for processing a larger number of generations.
+The wt_sosa table created by older versions involved sosa_num < 2^31, i.e. max_gen = 31. This limit is raised to 2^63.
+
+🇫🇷 Nouvel algorithme plus lent mais moins consommateur de mémoire. Cela permet de traiter un plus grand nombre de généations.
+La table wt_sosa créée par les anciennes versions impliquait sosa_num < 2^31 soit max_gen = 31. Cette limite est portée à 2^63.
+───────────────────────
+sosa20-variant-2025-05b.zip
+
+🇬🇧 We test the memory used to avoid overflow. To avoid unnecessary calculations, we stop processing as soon as we have found a generation without any sosa. 
+This ensures that none are forgotten. Ideally, we should be able to process one more generation than the one with the highest sosa.
+
+🇫🇷 On teste la mémoire utilisée pour éviter un dépassement. Pour éviter des calculs inutiles, on arrête le traitement dès qu’on a trouvé une génération sans aucun sosa. 
+On est alors certain de n’en oublier aucun. Idéalement, il faut suffisamment de mémoire pour traiter une génération de plus que celle du sosa le plus élevé.
+─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─
+🇬🇧 It is assumed that the individuals of the first generations are hidden from visitors, but that the 8 great-grandparents (4th generation: $ssbranch_gen = 4) are visible.
+We therefore determine which great-grandparent’s ancestor the individual is, and display a small symbol representing its place on a fan diagram.
+Finally, we display the great-grandparent and calculate the sosa number corresponding to this secondary root, unless img/symbols.png is missing.
+Other symbols can also be displayed, such as coats of arms (8 thumbnails 36x35px).
+
+🇫🇷 On suppose que les individus des premières générations sont masqués aux visiteurs mais que les 8 arrière-grands-parents (4e génération : $ssbranch_gen = 4) sont visibles.
+On détermine donc de quel arrière grand-parent l’individu est l’ancêtre et on affiche un petit symbole représentant sa place sur un diagramme en éventail.
+Enfin on affiche l’arrière grand-parent et on calcule le n° sosa correspondant à cette souche secondaire, sauf si img/symbols.png (ou .webp ou .jpg) est absent.
+On peut aussi afficher d’autres symboles, des blasons par exemple (8 vignettes 36x35px).
+─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─
+🇬🇧 Compact mode: displays permanently the contents and hide the title of the Sosa-Stradonitz block. To restore the title, just modify views/sidebar.phtml by deleting
+#sidebar-header-_sosa20_ { display: none; }
+
+🇫🇷 Mode compact : affiche en permanence le contenu et masque le titre du bloc Sosa-Stradonitz. Pour rétablir le titre, il suffit de modifier views/sidebar.phtml en supprimant
+#sidebar-header-_sosa20_ { display: none; }
+───────────────────────
