@@ -59,9 +59,15 @@ class SosaModule extends AbstractModule implements ModuleCustomInterface, Module
 {
 	use ModuleCustomTrait;
 	use ModuleSidebarTrait;
-//	┌──────────────────────────────────────────────┐
+// ┌─ Custom module version ──────────────────────┐
 	public const CUSTOM_VERSION = '2025.10.22';
-//	└──────────────────────────────────────────────┘
+// └──────────────────────────────────────────────┘
+	// Github repository
+	public const GITHUB_REPO = 'Gustine/sosa20';
+
+	// Github API URL to get the information about the latest releases
+	public const GITHUB_API_LATEST_VERSION = 'https://api.github.com/repos/'. self::GITHUB_REPO . '/releases/latest';
+	public const GITHUB_API_TAG_NAME_PREFIX = '"tag_name":"';
 
 	/**
 	 * How should this module be identified in the control panel, etc.?
@@ -112,10 +118,49 @@ class SosaModule extends AbstractModule implements ModuleCustomInterface, Module
 	 * A URL that will provide the latest stable version of this module.
 	 * @return string
 	 */
-	public function customModuleLatestVersionUrl(): string
-	{
-		return 'https://gustine.eu/mode_emploi/sosa/latest-version.txt';
-	}
+	public function customModuleLatestVersion(): string
+    {
+        // No update URL provided.
+        if (self::GITHUB_API_LATEST_VERSION === '') {
+            return $this->customModuleVersion();
+        }
+        return Registry::cache()->file()->remember(
+            $this->name() . '-latest-version',
+            function (): string {
+                try {
+                    $client = new Client(
+                        [
+                        'timeout' => 3,
+                        ]
+                    );
+
+                    $response = $client->get(self::GITHUB_API_LATEST_VERSION);
+
+                    if ($response->getStatusCode() === StatusCodeInterface::STATUS_OK) {
+                        $content = $response->getBody()->getContents();
+                        preg_match_all('/' . self::GITHUB_API_TAG_NAME_PREFIX . '\d+\.\d+\.\d+/', $content, $matches, PREG_OFFSET_CAPTURE);
+
+						if(!empty($matches[0]))
+						{
+							$version = $matches[0][0][0];
+							$version = substr($version, strlen(self::GITHUB_API_TAG_NAME_PREFIX));	
+						}
+						else
+						{
+							$version = $this->customModuleVersion();
+						}
+
+                        return $version;
+                    }
+                } catch (GuzzleException $ex) {
+                    // Can't connect to the server?
+                }
+
+                return $this->customModuleVersion();
+            },
+            86400
+        );
+    }
 
 	/**
 	 * Where to get support for this module.
