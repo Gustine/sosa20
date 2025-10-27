@@ -63,7 +63,7 @@ class SosaModule extends AbstractModule implements ModuleCustomInterface, Module
 	use ModuleCustomTrait;
 	use ModuleSidebarTrait;
 // ┌─ Custom module version ──────────────────────┐
-	public const CUSTOM_VERSION = '2025.10.22';
+	public const CUSTOM_VERSION = '2025.10.27';
 // └──────────────────────────────────────────────┘
 	// Github repository
 	public const GITHUB_REPO = 'Gustine/sosa20';
@@ -171,7 +171,7 @@ class SosaModule extends AbstractModule implements ModuleCustomInterface, Module
 	 */
 	public function customModuleSupportUrl(): string
 	{
-		return 'https://github.com/Gustine/sosa20';
+		return 'https://github.com/' . self::GITHUB_REPO;
 	}
 
 	/**
