@@ -171,7 +171,7 @@ class SosaModule extends AbstractModule implements ModuleCustomInterface, Module
 	 */
 	public function customModuleSupportUrl(): string
 	{
-		return I18N::translate('//gustine.eu/mode_emploi/sosa-en.php');
+		return 'https://github.com/Gustine/sosa20';
 	}
 
 	/**
