@@ -33,6 +33,7 @@
 
 declare(strict_types=1);
 
+use Fig\Http\Message\StatusCodeInterface;
 use Fisharebest\Localization\Translation;
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
@@ -48,6 +49,8 @@ use Fisharebest\Webtrees\View;
 use Fisharebest\Webtrees\Tree;
 use Fisharebest\Webtrees\Webtrees;
 use Fisharebest\Webtrees\Auth;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Illuminate\Database\Capsule\Manager as DB;
@@ -60,7 +63,7 @@ class SosaModule extends AbstractModule implements ModuleCustomInterface, Module
 	use ModuleCustomTrait;
 	use ModuleSidebarTrait;
 // ┌─ Custom module version ──────────────────────┐
-	public const CUSTOM_VERSION = '2025.10.22';
+	public const CUSTOM_VERSION = '2025.10.21';
 // └──────────────────────────────────────────────┘
 	// Github repository
 	public const GITHUB_REPO = 'Gustine/sosa20';
