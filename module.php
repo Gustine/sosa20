@@ -63,7 +63,7 @@ class SosaModule extends AbstractModule implements ModuleCustomInterface, Module
 	use ModuleCustomTrait;
 	use ModuleSidebarTrait;
 // ┌─ Custom module version ──────────────────────┐
-	public const CUSTOM_VERSION = '2025.10.21';
+	public const CUSTOM_VERSION = '2025.10.22';
 // └──────────────────────────────────────────────┘
 	// Github repository
 	public const GITHUB_REPO = 'Gustine/sosa20';
@@ -220,10 +220,12 @@ class SosaModule extends AbstractModule implements ModuleCustomInterface, Module
 		if ( file_exists(__DIR__ . '/resources/img/symbols.png') ) $urlsymbols = $this->assetUrl('img/symbols.png');
 		elseif ( file_exists(__DIR__ . '/resources/img/symbols.webp') ) $urlsymbols = $this->assetUrl('img/symbols.webp');
 		elseif ( file_exists(__DIR__ . '/resources/img/symbols.jpg') ) $urlsymbols = $this->assetUrl('img/symbols.jpg');
+		else $urlsymbols = '';
 
 		if ( file_exists(__DIR__ . '/resources/img/image.webp') ) $urlimage = $this->assetUrl('img/image.webp');
 		elseif ( file_exists(__DIR__ . '/resources/img/image.jpg') ) $urlimage = $this->assetUrl('img/image.jpg');
 		elseif ( file_exists(__DIR__ . '/resources/img/image.png') ) $urlimage = $this->assetUrl('img/image.png');
+		else $urlimage = '';
 
 		// customisation
 		switch ( $tree->Name() ) {
