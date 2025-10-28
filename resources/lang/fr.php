@@ -148,7 +148,7 @@ return [
   => 'On suppose que les individus des premières générations sont cachés aux visiteurs mais que les huit arrière-grands-parents de la quatrième génération sont visibles.',
 'It is assumed that the individuals of the first generations are hidden from visitors but that the four grandparents of the third generation are visible.'
   => 'On suppose que les individus des premières générations sont cachés aux visiteurs mais que les quatre grands-parents de la troisième génération sont visibles.',
-'It is assumed that the individuals of the first generations are hidden from visitors but that the two parents are visible.'
+'It is assumed that the individuals of the first generations are hidden from visitors but that both parents are visible.'
   => 'On suppose que les individus des premières générations sont cachés aux visiteurs mais que les deux parents sont visibles.',
 'We then determine which great-grandparent’s ancestor the individual is and display a small symbol representing its place on a fan diagram. Finally, we display the great-grandparent and calculate the sosa number corresponding to this secondary root.'
   => 'On détermine ensuite de quel arrière-grand-parent l’individu est l’ancêtre et on affiche un petit symbole représentant sa place sur un diagramme en éventail. Enfin, on affiche l’arrière-grand-parent et on calcule le numéro Sosa correspondant à cette racine secondaire.',

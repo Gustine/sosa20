@@ -149,7 +149,7 @@ return [
   => 'Se suposa que els individus de les primeres generacions estan ocults als visitants, però que els vuit besavis de la quarta generació són visibles.',
 'It is assumed that the individuals of the first generations are hidden from visitors but that the four grandparents of the third generation are visible.'
   => 'Se suposa que els individus de les primeres generacions estan ocults als visitants, però que els quatre avis de la tercera generació són visibles.',
-'It is assumed that the individuals of the first generations are hidden from visitors but that the two parents are visible.'
+'It is assumed that the individuals of the first generations are hidden from visitors but that both parents are visible.'
   => 'Se suposa que els individus de les primeres generacions estan ocults als visitants, però que tots dos pares són visibles.',
 'We then determine which great-grandparent’s ancestor the individual is and display a small symbol representing its place on a fan diagram. Finally, we display the great-grandparent and calculate the sosa number corresponding to this secondary root.'
   => 'A continuació, determinem de quin besavi és l’individu i mostrem un petit símbol que representa el seu lloc en un diagrama de ventall. Finalment, mostrem el besavi i calculem el nombre de Sosa corresponent a aquesta arrel secundària.',

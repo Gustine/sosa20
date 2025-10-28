@@ -148,8 +148,8 @@ return [
   => 'It is assumed that the individuals of the first generations are hidden from visitors but that the eight great-grandparents of the fourth generation are visible.',
 'It is assumed that the individuals of the first generations are hidden from visitors but that the four grandparents of the third generation are visible.'
   => 'It is assumed that the individuals of the first generations are hidden from visitors but that the four grandparents of the third generation are visible.',
-'It is assumed that the individuals of the first generations are hidden from visitors but that the two parents are visible.'
-  => 'It is assumed that the individuals of the first generations are hidden from visitors but that the two parents are visible.',
+'It is assumed that the individuals of the first generations are hidden from visitors but that both parents are visible.'
+  => 'It is assumed that the individuals of the first generations are hidden from visitors but that both parents are visible.',
 'We then determine which great-grandparent’s ancestor the individual is and display a small symbol representing its place on a fan diagram. Finally, we display the great-grandparent and calculate the sosa number corresponding to this secondary root.'
   => 'We then determine which great-grandparent’s ancestor the individual is and display a small symbol representing its place on a fan diagram. Finally, we display the great-grandparent and calculate the sosa number corresponding to this secondary root.',
 'We then determine which grandparent’s ancestor the individual is and display a small symbol representing its place on a fan diagram. Finally, we display the grandparent and calculate the sosa number corresponding to this secondary root.'
