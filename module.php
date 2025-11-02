@@ -205,10 +205,12 @@ class SosaModule extends AbstractModule implements ModuleCustomInterface, Module
 	   │ Example of multi-tree configuration based on gedcom name                                                                         │
 	   │ $ssbranch_gen: depth of secondary root calculation           ⇨ 4: 8 great-grandparents  ⇨ 3: 4 grandparents ⇨ 2: 2 parents       │
 	   │ $urlsymbols: height:35px; width:36px * 2^($ssbranch_gen -1)  ⇨ 4: 35 x 288px            ⇨ 3: 35 x 144px     ⇨ 2: 35 x 72px       │
+	   │ ⁂ Remember to back up your custom files (module.php, image.webp, etc.) as they will be overwritten during the next update.      │
 	   │                                                                                                                                  │
 	   │ Exemple de configuration multi arbres en fonction du nom du gedcom                                                               │
 	   │ $ssbranch_gen  profondeur du calcul de la racine secondaire  ⇨ 4: 8 arrière-grands-parents  ⇨ 3: 4 grands-parents ⇨ 2: 2 parents │
 	   │ $urlsymbols: height:35px; width:36px * 2^($ssbranch_gen -1)  ⇨ 4: 35 x 288px                ⇨ 3: 35 x 144px       ⇨ 2: 35 x 72px │
+	   │ ⁂ Pensez à sauvegarder vos fichiers personnalisés (module.php, image.webp, etc.) qui seront écrasés à la prochaine mise à jour. │
 	   └──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
 	 */
 	public function MultiTreeParam(Tree $tree): array
