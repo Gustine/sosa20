@@ -174,8 +174,8 @@ if (test_sosa_table($indi_xref, $tree)) {
 			$indi_sosa_gen = find_sosa_gen ($indi_xref, $ged_id1, '-1');
 
 			/***** Part 1 (always displayed) *****/
-			echo '<a href = "javascript:display_sidebar_sosa2()" title =' . I18N::translate('Click for more informations…')
-				. '><div id ="wt-sidebar-sosa1">';
+			echo '<a href = "javascript:display_sidebar_sosa2()" title = "' . I18N::translate('Click for more informations…')
+				. '"><div id ="wt-sidebar-sosa1">';
 
 			echo '<style> .symbols { width:36px; height:35px; background:url("' . $urlsymbols . '"); display:inline-block; float:left;} </style>' ;
 			if (($indi_sosa_num > 0) && ($urlsymbols !== "")) {
@@ -221,7 +221,7 @@ if (test_sosa_table($indi_xref, $tree)) {
 			}
 
 			echo '<div id = "wt-sidebar-sosa2" class = "wt-sidebar-content">'
-				. '<a rel = "nofollow" href = "' . $url_help . '" title ="'
+				. '<a rel = "nofollow" href = "' . $url_help . '" title = "'
 				. I18N::translate('In the numbering of Sosa-Stradonitz, number one is assigned to the root of the family tree ⇨ link to a help page…')
 				. '"><span class = "fas fa-question-circle fa-fw wt-icon-help"></span>&nbsp;</a>'
 				. I18N::translate('Family tree root') . ' (Sosa&nbsp;1)&nbsp;: ';
@@ -233,8 +233,8 @@ if (test_sosa_table($indi_xref, $tree)) {
 			echo $html_relationship . $default_root->FullName() . '</a>';
 
 			if (($default_root_xref === $default_root_xref) && ($urlimage !== '')) {
-				$img_title ='Sosa 1: default individual';
-				echo $html_relationship . '<br><img src="' . $urlimage . '" title = "Sosa 1" alt=""></a>';
+				$img_title = 'Sosa 1: default individual';
+				echo $html_relationship . '<br><img src="' . $urlimage . '" title = "Sosa 1" alt = ""></a>';
 			}
 			/***** Part 2.1 Great-grandparents. Unless img/symbols.png is missing.*****/
 			/* It is assumed that individuals from the first generations are hidden from not logged-in users but that the great-grandparents are visible.
@@ -243,7 +243,7 @@ if (test_sosa_table($indi_xref, $tree)) {
 			if (($indi_sosa_num > 0) && ($urlsymbols !== '')) {
 				$help_title = 'An ascending branch of a great-grandparent of the root ⇨ link to a help page…';
 				$text = calc_ssbranch($individual, $indi_sosa_num, $indi_sosa_gen,  $ssbranch_gen, $ged_id1, $vesta_extended, '-1');
-				if ($text !== "") echo '<hr><a href = "' . $url_help . '" title ="' . I18N::translate($help_title)
+				if ($text !== "") echo '<hr><a href = "' . $url_help . '" title = "' . I18N::translate($help_title)
 					. '"><span class = "fas fa-question-circle fa-fw wt-icon-help"></span>&nbsp;</a>'
 					. $text;
 			}
@@ -251,7 +251,7 @@ if (test_sosa_table($indi_xref, $tree)) {
 			/***** Part 2.2 Personnal Sosa numbers. Unless img/image.png is  missing *****/
 			if (($logged === 1) && ($urlimage !== '')) { // for logged-in users who are linked
 				$help_title = 'Logged-in members who are related to an individual in the tree can view the Sosa numbers of their own ancestors ⇨ link to a help page…';
-				echo '<hr><a href = "' . $url_help . '" title ="' . I18N::translate($help_title)
+				echo '<hr><a href = "' . $url_help . '" title = "' . I18N::translate($help_title)
 					. '"><span class = "fas fa-question-circle fa-fw wt-icon-help"></span>&nbsp;</a>';
 				if (find_root_xref($ged_id1, $user_id) !== $user_xref) echo '<br>' .  I18N::translate('First, you need to calculate your own Sosa numbers.');
 				else { // the table has been filled with personal numbers
@@ -319,8 +319,8 @@ if (test_sosa_table($indi_xref, $tree)) {
 	/***** Part 3 for members and editors only (hidden by default, displayed on request) *****/
 	if ( (Auth::isMember($tree) && ($default_root_xref !== NULL) && ($logged === 1))
 	  || (Auth::isEditor($tree) && ($default_root_xref !== NULL)) ) {
-		echo '<br><a href = "javascript:display_sidebar_sosa3()" title = ' . I18N::translate('Click for more informations…')
-			. '><div><span class = "plus_minus">±</span>&nbsp;</div></a>';
+		echo '<br><a href = "javascript:display_sidebar_sosa3()" title = "' . I18N::translate('Click for more informations…')
+			. '"><div><span class = "plus_minus">±</span>&nbsp;</div></a>';
 				echo '<div id = "wt-sidebar-sosa3" class = "wt-sidebar-content">';
 		// Members linked can update their own Sosa numbers
 		if (Auth::isMember($tree) && ($logged === 1) && ($default_root_xref !== NULL) ) {
