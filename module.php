@@ -232,13 +232,13 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 		$ssbranch_gen = $this->getPreference($tree_id . '-ssbranch_level', '3') +1;
 
 		$symbols_file = $this->getPreference($tree_id . '-symbols_file', 'symbols.png');
-		if ( file_exists(__DIR__ . '/resources/img/' . $symbols_file) ) $urlsymbols = $this->assetUrl('img/' . $symbols_file);
+		if ( ($symbols_file !== '') && file_exists(__DIR__ . '/resources/img/' . $symbols_file) ) $urlsymbols = $this->assetUrl('img/' . $symbols_file);
 		else $urlsymbols = '';
 
 		$own_numbers = $this->getPreference($tree_id . '-own_numbers', '1');
 
 		$profile_file = $this->getPreference($tree_id . '-profile_file', 'image.webp');
-		if ( file_exists(__DIR__ . '/resources/img/' . $profile_file) ) $urlimage = $this->assetUrl('img/' . $profile_file);
+		if ( ($profile_file !== '') && file_exists(__DIR__ . '/resources/img/' . $profile_file) ) $urlimage = $this->assetUrl('img/' . $profile_file);
 		else $urlimage = '';
 
 		// Get the logged-in user
@@ -368,13 +368,13 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 		$ssbranch_gen = $this->getPreference($bk_gid . '-ssbranch_level', '3') +1;
 
 		$symbols_file = $this->getPreference($bk_gid . '-symbols_file', 'symbols.png');
-		if ( file_exists(__DIR__ . '/resources/img/' . $symbols_file) ) $urlsymbols = $this->assetUrl('img/' . $symbols_file);
+		if ( ($symbols_file !== '') && file_exists(__DIR__ . '/resources/img/' . $symbols_file) ) $urlsymbols = $this->assetUrl('img/' . $symbols_file);
 		else $urlsymbols = '';
 
 		$own_numbers = $this->getPreference($bk_gid . '-own_numbers', '1');
 
 		$profile_file = $this->getPreference($bk_gid . '-profile_file', 'image.webp');
-		if ( file_exists(__DIR__ . '/resources/img/' . $profile_file) ) $urlimage = $this->assetUrl('img/' . $profile_file);
+		if ( ($profile_file !== '') && file_exists(__DIR__ . '/resources/img/' . $profile_file) ) $urlimage = $this->assetUrl('img/' . $profile_file);
 		else $urlimage = '';
 
 		// Get the logged-in user
