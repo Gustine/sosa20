@@ -45,18 +45,17 @@ use Fisharebest\Webtrees\Http\RequestHandlers\ControlPanel;
 		<!-- 1 - profile_file -->
 		<div class="mb-3 row">
 			<label class="col-form-label col-sm-3">
-				<?= I18N::translate('Profile image for the default individual') . '*' ?>
+				<?= I18N::translate('Profile image for the default individual') ?>
 			</label>
 			<div class="col-auto">
-				<input class="form-control" type="text" name="profile_file" size="30" value="<?= $profile_file ?>" required>
+				<input class="form-control" type="text" name="profile_file" size="30" value="<?= $profile_file ?>">
 			</div>
 		</div>
-		<p><?= '* ' . I18N::translate('If you do not want to display a profile picture, simply enter a non-existent file name such as xx. The same applies to symbols.') ?></p>
 
 		<!-- 2 - ssbranch_level and symbols_file -->
 		<div class="mb-3 row">
 			<legend class="col-form-label col-sm-3">
-				<?= I18N::translate('The Sosa number corresponding to an ancestor is displayed') ?>
+				<?= I18N::translate('Display the Sosa number corresponding to an ancestor') ?>
 			</legend>
 			<div class="col-sm-9">
 				<?= view('components/radios-inline', ['name' => 'ssbranch_level', 'options' => 
@@ -67,14 +66,14 @@ use Fisharebest\Webtrees\Http\RequestHandlers\ControlPanel;
 				<?= I18N::translate('Sprite for symbols (height: 35px, width: 72 or 144 or 288 px)') ?>
 			</label>
 			<div class="col-auto">
-				<input class="form-control" type="text" name="symbols_file" size="30" value="<?= $symbols_file ?>" required>
+				<input class="form-control" type="text" name="symbols_file" size="30" value="<?= $symbols_file ?>">
 			</div>
 		</div>
 
 		<!-- 3 - own_numbers -->
 		<div class="mb-3 row">
 			<legend class="col-form-label col-sm-3">
-				<?= I18N::translate('The Sosa number corresponding to a logged-in member is displayed') ?>
+				<?= I18N::translate('Display the Sosa number corresponding to a logged-in member') ?>
 			</legend>
 			<div class="col-sm-9">
 				<?= view('components/radios-inline', ['name' => 'own_numbers', 'options' => 
