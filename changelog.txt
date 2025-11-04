@@ -3,6 +3,12 @@
 🇫🇷 https://gustine.eu/mode_emploi/sosa.php
 
 ───────────────────────
+sosa20-module-2025-11.zip
+
+🇬🇧 A settings page makes it easier to manage multiple trees (profile image, symbols, number of generations).
+
+🇫🇷 Une page de paramétrage facilite la gestion de plusieurs arbres (image de profil, symboles, nombre de générations).
+───────────────────────
 sosa20-module-2025-10.zip
 
 🇬🇧 For each connected member linked to an individual in the tree, the Sosa numbers, calculated from that individual, are also displayed.
