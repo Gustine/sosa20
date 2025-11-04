@@ -1,0 +1,113 @@
+<?php
+/*
+ * …/modules_v4/sosa20/resources/views/sidebar.phtml
+ * help : https://gustine.eu/mode_emploi/sosa-en.php
+ *
+ * MR 2025-11 parameter management in case of multiple trees (inspired by jc-fancy-imagebar)
+ */
+use Fisharebest\Webtrees\I18N;
+use Fisharebest\Webtrees\View;
+use Fisharebest\Webtrees\Services\ModuleService;
+use Fisharebest\Webtrees\Http\RequestHandlers\ControlPanel;
+
+?>
+
+<?= view('components/breadcrumbs', ['links' => [route(ControlPanel::class) => I18N::translate('Control panel'), $title]]) ?>
+
+<h1><?= $title ?></h1>
+
+<div class="mb-5">
+	<form method="post">
+		<?= csrf_field() ?>
+		<input type="hidden" name="save" id="save" value="1">
+		<input type="hidden" name="switch" id="switch" value="1">
+		<!-- TREE LIST -->
+		<div class="mb-3 row">
+			<label class="col-sm-3 col-form-label for=" tree"><?= I18N::translate('Family tree') ?></label>
+			<div class="col-sm-9">
+				<select class="form-control" id="tree" name="tree-id" type="text" required>
+					<option value=""><?= I18N::translate('&lt;select&gt;') ?></option>
+					<?php foreach ($all_trees as $tree) : ?>
+						<?php if($tree->id() === (int)$tree_id) : ?>
+						<option value="<?= $tree->id() ?>" selected="selected">
+							<?= $tree->title() ?>
+						</option>
+						<?php else : ?>
+						<option value="<?= $tree->id() ?>">
+							<?= $tree->title() ?>
+						</option>
+						<?php endif; ?>
+					<?php endforeach ?>
+				</select>
+			</div>
+		</div>
+
+		<!-- 1 - profile_file -->
+		<div class="mb-3 row">
+			<label class="col-form-label col-sm-3">
+				<?= I18N::translate('Profile image for the default individual') . '*' ?>
+			</label>
+			<div class="col-auto">
+				<input class="form-control" type="text" name="profile_file" size="30" value="<?= $profile_file ?>" required>
+			</div>
+		</div>
+		<p><?= '* ' . I18N::translate('If you do not want to display a profile picture, simply enter a non-existent file name such as xx. The same applies to symbols.') ?></p>
+
+		<!-- 2 - ssbranch_level and symbols_file -->
+		<div class="mb-3 row">
+			<legend class="col-form-label col-sm-3">
+				<?= I18N::translate('The Sosa number corresponding to an ancestor is displayed') ?>
+			</legend>
+			<div class="col-sm-9">
+				<?= view('components/radios-inline', ['name' => 'ssbranch_level', 'options' => 
+					[I18N::translate('no'), I18N::translate('parents'), I18N::translate('grandparents'), I18N::translate('great-grandparents')],
+					'selected' => (int)$ssbranch_level]) ?>
+			</div>
+			<label class="col-form-label col-sm-3">
+				<?= I18N::translate('Sprite for symbols (height: 35px, width: 72 or 144 or 288 px)') ?>
+			</label>
+			<div class="col-auto">
+				<input class="form-control" type="text" name="symbols_file" size="30" value="<?= $symbols_file ?>" required>
+			</div>
+		</div>
+
+		<!-- 3 - own_numbers -->
+		<div class="mb-3 row">
+			<legend class="col-form-label col-sm-3">
+				<?= I18N::translate('The Sosa number corresponding to a logged-in member is displayed') ?>
+			</legend>
+			<div class="col-sm-9">
+				<?= view('components/radios-inline', ['name' => 'own_numbers', 'options' => 
+					[I18N::translate('no'), I18N::translate('yes')],
+					'selected' => (int)$own_numbers]) ?>
+			</div>
+		</div>
+
+		<button type="submit" class="btn btn-primary">
+			<?= view('icons/save') ?>
+			<?= I18N::translate('save') ?>
+		</button>
+	</form>
+</div>
+
+
+
+
+<?php View::push('javascript') ?>
+<script>
+	$('#tree').on('change', function() {
+		$('#switch').val(0);
+	});
+
+	$('#tree, #ssbranch_level').on('change', function() {
+		$('#save').val('0');
+		$('form').submit();
+		return false;
+	});
+
+	if($('#display-all-0').is(':checked')) {
+		$('#media-list').val("");
+	}
+
+</script>
+<?php View::endpush() ?>

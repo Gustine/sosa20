@@ -2,7 +2,8 @@
 /*
  * …/modules_v4/sosa20/resources/views/help.phtml
  * help : https://gustine.eu/mode_emploi/sosa.php
- * MR 2025-10
+ * MR 2025-10 new page.
+ * MR 2025-11 the ssbranch_gen and own_numbers parameters now determine the display, rather than the presence of symbols.png or image.webp.
  */
 
 use Fisharebest\Webtrees\Auth;
@@ -16,14 +17,11 @@ use Fisharebest\Webtrees\View;
 use Illuminate\Database\Capsule\Manager as DB;
 use Illuminate\Database\Schema\Blueprint;
 
-/* urlsymbols : if absent, grandparents are not displayed
- * urlimage : if absent, numbers related to the user are not displayed
+/* ssbranch_gen == 1, grandparents are not displayed
+ * own_numbers == 0, numbers related to the user are not displayed
  * bk_gid : identifier of the current gedcom
  * bk_xref : xref of the current individual (we want to go back to his page after processing)
 */
-$ssbranch_gen  = $param[0]; // 4th génération : 8 great-grandparents
-$urlsymbols = $param[1]; // 4th génération : 35 x 288px
-$urlimage = $param[2];
 
 echo '<style>
 	.symbols { width:36px; height:35px; background:url("' . $urlsymbols . '"); display:inline-block;}
@@ -60,9 +58,9 @@ echo '<h1>' . I18N::translate('Help for Sosa²⁰') . '</h1>';
 	echo '</p>';
 
 
-if ($urlsymbols !== '') {
+if ($ssbranch_gen !== '1') {
 	switch ($ssbranch_gen) {
-	case 2 :
+	case '2' :
 		echo '<h2>' . I18N::translate('A parent is number&nbsp;1') . ' <span class="symbols"> </span></h2>';
 		if ($urlhelp !== '') echo '<img src="' . $urlhelp . '" title = "Sosa 1" alt="img/help.png" class="cropped2" ><br>&nbsp;';
 		echo '<p>' . I18N::translate('It is assumed that the individuals of the first generations are hidden from visitors but that both parents are visible.') . '</p>';
@@ -71,7 +69,7 @@ if ($urlsymbols !== '') {
 		echo '</p>';
 		break;
 
-	case 3 :
+	case '3' :
 		echo '<h2>' . I18N::translate('A grandparent is number&nbsp;1') . ' <span class="symbols"> </span></h2>';
 		if ($urlhelp !== '') echo '<img src="' . $urlhelp . '" title = "Sosa 1" alt="img/help.png" class="cropped2" ><br>&nbsp;';
 		echo '<p>' . I18N::translate('It is assumed that the individuals of the first generations are hidden from visitors but that the four grandparents of the third generation are visible.') . '</p>';
@@ -91,7 +89,7 @@ if ($urlsymbols !== '') {
 	}
 }
 
-if ($urlimage !== '') {
+if ($own_numbers !== '0') {
 	echo '<h2>' . I18N::translate('You are number&nbsp;1') . '</h2>';
 	if ($urlhelp !== '') echo '<img src="' . $urlhelp . '" title = "Sosa 1" alt="img/help.png" class="cropped3" ><br>&nbsp;';
 	echo '<p>';
