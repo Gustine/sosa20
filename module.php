@@ -229,9 +229,9 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 
 		$tree = $individual->tree();
 		$tree_id = $tree->id();
-		$ssbranch_gen = $this->getPreference($tree_id . '-ssbranch_level', '3') +1;
+		$ssbranch_gen = (int) $this->getPreference($tree_id . '-ssbranch_level', '3') +1;
 
-		$symbols_file = $this->getPreference($tree_id . '-symbols_file', 'symbols.png');
+		$symbols_file = $this->getPreference($tree_id . '-symbols_file', 'symbols8.png');
 		if ( ($symbols_file !== '') && file_exists(__DIR__ . '/resources/img/' . $symbols_file) ) $urlsymbols = $this->assetUrl('img/' . $symbols_file);
 		else $urlsymbols = '';
 
@@ -250,7 +250,7 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 			'vesta_extended' => $vesta_extended,
 			'ssbranch_gen' => $ssbranch_gen,
 			'urlsymbols' => $urlsymbols,
-			'own_numbers' => $own_numbers,
+			'own_numbers' => (int) $own_numbers,
 			'urlimage' => $urlimage,
 			'user' => $user,
 		]);
@@ -365,9 +365,9 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 		} else {
 			$tree = app(TreeService::class)->find(intval($bk_gid, 10));
 		}
-		$ssbranch_gen = $this->getPreference($bk_gid . '-ssbranch_level', '3') +1;
+		$ssbranch_gen = (int) $this->getPreference($bk_gid . '-ssbranch_level', '3') +1;
 
-		$symbols_file = $this->getPreference($bk_gid . '-symbols_file', 'symbols.png');
+		$symbols_file = $this->getPreference($bk_gid . '-symbols_file', 'symbols8.png');
 		if ( ($symbols_file !== '') && file_exists(__DIR__ . '/resources/img/' . $symbols_file) ) $urlsymbols = $this->assetUrl('img/' . $symbols_file);
 		else $urlsymbols = '';
 
@@ -390,7 +390,7 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 			'tree' => $tree,
 			'ssbranch_gen' => $ssbranch_gen,
 			'urlsymbols' => $urlsymbols,
-			'own_numbers' => $own_numbers,
+			'own_numbers' => (int) $own_numbers,
 			'urlimage' => $urlimage,
 			'urlhelp' => $urlhelp,
 			'user' => $user,
@@ -428,7 +428,7 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 		}
 
 		$ssbranch_level = $this->getPreference($tree_id . '-ssbranch_level', '3');
-		$symbols_file = $this->getPreference($tree_id . '-symbols_file', 'symbols.png');
+		$symbols_file = $this->getPreference($tree_id . '-symbols_file', 'symbols8.png');
 		$own_numbers = $this->getPreference($tree_id . '-own_numbers', '1');
 		$profile_file = $this->getPreference($tree_id . '-profile_file', 'image.webp');
 
