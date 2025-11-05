@@ -431,6 +431,7 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 		$symbols_file = $this->getPreference($tree_id . '-symbols_file', 'symbols8.png');
 		$own_numbers = $this->getPreference($tree_id . '-own_numbers', '1');
 		$profile_file = $this->getPreference($tree_id . '-profile_file', 'image.webp');
+		$reset_param = $this->getPreference($tree_id . '-reset_param', '0');
 
 		return $this->viewResponse($this->name() . '::settings', [
 			'all_trees'      => $this->tree_service->all(),
@@ -440,6 +441,7 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 			'symbols_file'   => $symbols_file,
 			'own_numbers'    => $own_numbers,
 			'profile_file'   => $profile_file,
+			'reset_param'    => $reset_param,
 
 	]);
 	}
@@ -459,13 +461,26 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 		$this->setPreference('last-tree-id', $tree_id);
 
 		if ($params['save'] === '1') {
-			$this->setPreference($tree_id . '-ssbranch_level',  $params['ssbranch_level']);
-			$this->setPreference($tree_id . '-symbols_file',  $params['symbols_file']);
-			$this->setPreference($tree_id . '-own_numbers',  $params['own_numbers']);
-			$this->setPreference($tree_id . '-profile_file',  $params['profile_file']);
+			if ($params['reset_param'] !== '0') {
+				$this->setPreference($tree_id . '-ssbranch_level', '3');
+				$this->setPreference($tree_id . '-symbols_file', 'symbols8.png');
+				$this->setPreference($tree_id . '-own_numbers', '1');
+				$this->setPreference($tree_id . '-profile_file', 'image.webp');
+				$this->setPreference($tree_id . '-reset_param', '0');
 
-			$message = I18N::translate('The preferences for the module “%s” have been updated.', $this->title());
-			FlashMessages::addMessage($message, 'success');
+				$message = I18N::translate('The settings for the tree “%s” have been reset to their default values.', $this->title());
+				FlashMessages::addMessage($message, 'success');
+			}
+			else {
+				$this->setPreference($tree_id . '-ssbranch_level', $params['ssbranch_level']);
+				$this->setPreference($tree_id . '-symbols_file', $params['symbols_file']);
+				$this->setPreference($tree_id . '-own_numbers', $params['own_numbers']);
+				$this->setPreference($tree_id . '-profile_file', $params['profile_file']);
+				$this->setPreference($tree_id . '-reset_param', '0');
+
+				$message = I18N::translate('The settings for the tree “%s” have been updated.', $this->title());
+				FlashMessages::addMessage($message, 'success');
+			}
 		}
 
 		return redirect($this->getConfigLink());
