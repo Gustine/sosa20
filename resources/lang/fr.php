@@ -173,4 +173,20 @@ return [
 'You are not logged-in.'
   => 'Vous n’êtes pas connecté.',
 
+// settings.phtml 2025-11
+'Profile image for the default individual (free height and width)'
+  => 'Image de profil pour l’individu par défaut (hauteur et largeur libres)',
+'Display the Sosa number corresponding to an ancestor'
+  => 'Afficher le numéro Sosa correspondant à un ancêtre',
+'parents'
+  => 'parents',
+'grandparents'
+  => 'grands-parents',
+'great-grandparents'
+  => 'arrière-grands-parents',
+'Display the Sosa number corresponding to a logged-in member'
+  => 'Afficher le numéro Sosa correspondant à un membre connecté',
+'Sprite for symbols (height: 35px, width: 72 or 144 or 288 px)'
+  => 'Sprite pour les symboles (hauteur : 35 px, largeur : 72 ou 144 ou 288 px)',
+
 ];
