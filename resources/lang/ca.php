@@ -174,4 +174,26 @@ return [
 'You are not logged-in.'
   => 'No has iniciat la sessió.',
 
+// settings.phtml 2025-11
+'Profile image for the default individual (free height and width)'
+  => 'Imatge de perfil per a la persona predeterminada (alçada i amplada lliures)',
+'Display the Sosa number corresponding to an ancestor'
+  => 'Mostra el número de Sosa corresponent a un avantpassat',
+'parents'
+  => 'pares',
+'grandparents'
+  => 'avis',
+'great-grandparents'
+  => 'besavis',
+'Display the Sosa number corresponding to a logged-in member'
+  => 'Mostra el número de Sosa corresponent a un membre que ha iniciat la sessió',
+'Sprite for symbols (height: 35px, width: 72 or 144 or 288 px)'
+  => 'Sprite per a símbols (alçada: 35px, amplada: 72 o 144 o 288px)',
+'Reset to default values'
+  => 'Restableix els valors predeterminats',
+'The settings for the tree “%s” have been reset to their default values.'
+  => 'Els paràmetres de l’arbre "%s" s’han restaurat als seus valors predeterminats.',
+'The settings for the tree “%s” have been updated.'
+  => 'Els paràmetres de l’arbre "%s" s’han actualitzat.',
+
 ];

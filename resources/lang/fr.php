@@ -188,5 +188,11 @@ return [
   => 'Afficher le numéro Sosa correspondant à un membre connecté',
 'Sprite for symbols (height: 35px, width: 72 or 144 or 288 px)'
   => 'Sprite pour les symboles (hauteur : 35 px, largeur : 72 ou 144 ou 288 px)',
+'Reset to default values'
+  => 'Réinitialiser aux valeurs par défaut',
+'The settings for the tree “%s” have been reset to their default values.'
+  => 'Les paramètres pour l’arbre « %s » ont été rétablis aux valeurs par défaut.',
+'The settings for the tree “%s” have been updated.'
+  => 'Les paramètres pour l’arbre « %s » ont été mis à jour.',
 
 ];

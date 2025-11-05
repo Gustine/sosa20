@@ -173,4 +173,26 @@ return [
 'You are not logged-in.'
   => 'Sie sind nicht angemeldet.',
 
+// settings.phtml 2025-11
+'Profile image for the default individual (free height and width)'
+  => 'Profilbild für Standardperson (Höhe und Breite frei wählbar)',
+'Display the Sosa number corresponding to an ancestor'
+  => 'Zeige die Sosa-Nummer an, die einem Vorfahren entspricht',
+'parents'
+  => 'Eltern',
+'grandparents'
+  => 'Großeltern',
+'great-grandparents'
+  => 'Urgroßeltern',
+'Display the Sosa number corresponding to a logged-in member'
+  => 'Die Sosa-Nummer eines angemeldeten Mitglieds anzeigen',
+'Sprite for symbols (height: 35px, width: 72 or 144 or 288 px)'
+  => 'Sprite für Symbole (Höhe: 35 px, Breite: 72 oder 144 oder 288 px)',
+'Reset to default values'
+  => 'Auf Standardwerte zurücksetzen',
+'The settings for the tree “%s” have been reset to their default values.'
+  => 'Die Einstellungen für den Baum „%s“ wurden auf die Standardwerte zurückgesetzt.',
+'The settings for the tree “%s” have been updated.'
+  => 'Die Einstellungen für den Baum „%s“ wurden aktualisiert.',
+
 ];

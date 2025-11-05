@@ -173,4 +173,26 @@ return [
 'You are not logged-in.'
   => 'Je bent niet ingelogd.',
 
+// settings.phtml 2025-11
+'Profile image for the default individual (free height and width)'
+  => 'Profielafbeelding voor de standaardpersoon (vrije hoogte en breedte)',
+'Display the Sosa number corresponding to an ancestor'
+  => 'Geef het Sosa-nummer weer dat overeenkomt met een voorouder',
+'parents'
+  => 'ouders',
+'grandparents'
+  => 'grootouders',
+'great-grandparents'
+  => 'overgrootouders',
+'Display the Sosa number corresponding to a logged-in member'
+  => 'Het Sosa-nummer weergeven dat overeenkomt met een aangemeld lid',
+'Sprite for symbols (height: 35px, width: 72 or 144 or 288 px)'
+  => 'Sprite voor symbolen (hoogte: 35 px, breedte: 72 of 144 of 288 px)',
+'Reset to default values'
+  => 'Terugzetten naar standaardwaarden',
+'The settings for the tree “%s” have been reset to their default values.'
+  => 'De instellingen voor de boomstructuur “%s” zijn teruggezet naar de standaardwaarden.',
+'The settings for the tree “%s” have been updated.'
+  => 'De instellingen voor de boomstructuur “%s” zijn bijgewerkt.',
+
 ];
