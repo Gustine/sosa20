@@ -77,8 +77,7 @@ use Fisharebest\Webtrees\Http\RequestHandlers\ControlPanel;
 			</legend>
 			<div class="col-sm-9">
 				<?= view('components/radios-inline', ['name' => 'own_numbers', 'options' => 
-					[I18N::translate('no'), I18N::translate('yes')],
-					'selected' => (int)$own_numbers]) ?>
+					[I18N::translate('no'), I18N::translate('yes')], 'selected' => (int)$own_numbers]) ?>
 			</div>
 		</div>
 
@@ -86,6 +85,11 @@ use Fisharebest\Webtrees\Http\RequestHandlers\ControlPanel;
 			<?= view('icons/save') ?>
 			<?= I18N::translate('save') ?>
 		</button>
+
+		<div class="mx-1 mt-2">
+			<?php echo I18N::translate('Reset to default values') . '<br>' . view('components/radios-inline', ['name' => 'reset_param', 'options' => [I18N::translate('no'), I18N::translate('yes')],
+				'selected' => (int)$reset_param]) ?>
+		</div>
 	</form>
 </div>
 
