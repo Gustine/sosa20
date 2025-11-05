@@ -17,12 +17,6 @@ use Fisharebest\Webtrees\View;
 use Illuminate\Database\Capsule\Manager as DB;
 use Illuminate\Database\Schema\Blueprint;
 
-/* ssbranch_gen == 1, grandparents are not displayed
- * own_numbers == 0, numbers related to the user are not displayed
- * bk_gid : identifier of the current gedcom
- * bk_xref : xref of the current individual (we want to go back to his page after processing)
-*/
-
 echo '<style>
 	.symbols { width:36px; height:35px; background:url("' . $urlsymbols . '"); display:inline-block;}
 	.wikipedia { content: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9wLGww4AEdl0uQAAANESURBVDjLjZPPa1xVHMXP9/2YlzfJzKSJzSRTm06cpjQBM0Kji2oJLZpmI7oQBKEWEcGFy0JFcVWx+AcoLsQKiSKulUJDlbSNrTFxjElqQ0doJmaSmclkMu/Ne/Puu+/e66oiouBndRafszsH+BeuzV7H8q+r+N+srq79lW/cmjf+y/v0ynTnTtXVAODK59MAACptlDB4ZBBLi0vHuJCzOzs7H774wvMfL/20qMc6Os5zHh3mEa+128G5er2er+3uNnRdn3rj9ddWAIAAYG+v0eu67trm1h+VZ06ezAOA5/lnN0ulr4vFYrK7pwemacLzfBR+LqB/YKAihHjp1XOv3NJ3d+tGpVKZI6JhKeQP6+vrsxMTE+8tLCwcODo8PDQyOnrQNGNKQZGQkepLp8EY66zX65OTk1OfGIwFx8yYOdZs7svpmZmzuVxuMR6PD1mWhcHBw2AsULquQSkFjTSCAhgL1W6t+ugjB/vyhhDyRDKRMAmE06fPxO/9djebz+fV2FiedE2HlIp+vHMHfek0EokESCN0WBalBzJgLHjOcB0nv91qYWR0RGUOPYvh3GNIJpOwbRtCREilUhgfHwePBPy2DygJ27ZVV1cXOc3m45oZi+nJZBKcR+R7PpXLZSreL5Jtd0BJBR5xxDvjMGMmhBAg0kAEcB4iYAEM27bvWpaFKOLQNEImcwikEcIwhJQSkYhgmCZ+X1lBaWMT2aEhcM5JKYWYYd43qtXague54vjxEU0pRf0D/YiiCCwIIZUC5xE4j2AaJmJWDFJKsDBUvt8mFrJrRm9vz70wZKV2u501TVM5jkPLhV/Qn8ngaC73sIBU9wHEuxKo1mrgLFTb5a3t0oMHBS2bPcIymcx5zjkJIYhIR8yy4LVaaAcBPN9HEARgjOHm3Bz2Gg3s7Tc0KcSFL76ccejhzufnb7+sG/pX3alupesapJQUcq6CIIDv+eR6nipvbSkWhprX8t56++KFjwBAB4C5Gzdx6tTTa0+NP3m7I26f2W82kxsbG2i1PHJdl5qOC9dxaK/R2HFd981337n42aX3L+P7766D/vm4b769Guc8fKLVak0xFp6IokgjjZZ9r321Wq0WLn9wyfm7/yc3B7pjRCPj5QAAAABJRU5ErkJggg==); width: 16px; height: 16px; }
@@ -30,6 +24,12 @@ echo '<style>
 	.cropped2 { width: 360px; height:  75px; object-fit: cover; object-position: 0px -235px; }
 	.cropped3 { width: 360px; height:  70px; object-fit: cover; object-position: 0px -345px; }
 	</style>';
+
+/* $own_numbers === 0, numbers related to the user are not displayed
+ * $ssbranch_gen === 1, neither parents, grandparents, nor great-grandparents are displayed
+ * $bk_gid : identifier of the current gedcom
+ * $bk_xref : xref of the current individual (we want to go back to his page after processing)
+*/
 
 $individual = Registry::individualFactory()->make($bk_xref, $tree);
 if ($user !== null) {
@@ -58,9 +58,9 @@ echo '<h1>' . I18N::translate('Help for Sosa²⁰') . '</h1>';
 	echo '</p>';
 
 
-if ($ssbranch_gen !== '1') {
+if ($ssbranch_gen !== 1) {
 	switch ($ssbranch_gen) {
-	case '2' :
+	case 2 :
 		echo '<h2>' . I18N::translate('A parent is number&nbsp;1') . ' <span class="symbols"> </span></h2>';
 		if ($urlhelp !== '') echo '<img src="' . $urlhelp . '" title = "Sosa 1" alt="img/help.png" class="cropped2" ><br>&nbsp;';
 		echo '<p>' . I18N::translate('It is assumed that the individuals of the first generations are hidden from visitors but that both parents are visible.') . '</p>';
@@ -69,7 +69,7 @@ if ($ssbranch_gen !== '1') {
 		echo '</p>';
 		break;
 
-	case '3' :
+	case 3 :
 		echo '<h2>' . I18N::translate('A grandparent is number&nbsp;1') . ' <span class="symbols"> </span></h2>';
 		if ($urlhelp !== '') echo '<img src="' . $urlhelp . '" title = "Sosa 1" alt="img/help.png" class="cropped2" ><br>&nbsp;';
 		echo '<p>' . I18N::translate('It is assumed that the individuals of the first generations are hidden from visitors but that the four grandparents of the third generation are visible.') . '</p>';
@@ -89,7 +89,7 @@ if ($ssbranch_gen !== '1') {
 	}
 }
 
-if ($own_numbers !== '0') {
+if ($own_numbers === 1) {
 	echo '<h2>' . I18N::translate('You are number&nbsp;1') . '</h2>';
 	if ($urlhelp !== '') echo '<img src="' . $urlhelp . '" title = "Sosa 1" alt="img/help.png" class="cropped3" ><br>&nbsp;';
 	echo '<p>';

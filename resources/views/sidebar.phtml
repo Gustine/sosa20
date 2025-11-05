@@ -109,6 +109,9 @@ echo '<script>
 </script>';
 
 /***** various parameters *****/
+/* $own_numbers === 0, numbers related to the user are not displayed
+ * $ssbranch_gen === 1, neither parents, grandparents, nor great-grandparents are displayed
+*/
 $tree = $individual->tree();
 $ged_id1 = $tree->id(); // current gedcom1 identifier
 if ($user !== null) $user_id = $user->id(); else $user_id = -1; // default user if not logged in
@@ -126,7 +129,7 @@ $url_help = route('module', [
 if (test_sosa_table($indi_xref, $tree)) {
 	$default_root_xref = $tree->getPreference('PEDIGREE_ROOT_ID'); // xref of the default individual of the current gedcom
 
-	if ($own_numbers === '1') {
+	if ($own_numbers === 1) {
 		if (Auth::isMember($tree)) { // logged-in user
 			if ($user !== null) $user_xref = $tree->getUserPreference($user, 'gedcomid'); // or $tree->getUserPreference($user, UserInterface::PREF_TREE_ACCOUNT_XREF)
 			if ($user_xref !== '') { // user is present in the tree
@@ -176,7 +179,7 @@ if (test_sosa_table($indi_xref, $tree)) {
 				. '"><div id ="wt-sidebar-sosa1">';
 
 			echo '<style> .symbols { width:36px; height:35px; background:url("' . $urlsymbols . '"); display:inline-block; float:left;} </style>' ;
-			if (($indi_sosa_num > 0) && ($urlsymbols !== "")) {
+			if ( ($indi_sosa_num > 0) && ($urlsymbols !== "") && ($ssbranch_gen !== 1) ) {
 				$symbol[0] = "   0px  0px";
 				$symbol[1] = " -36px  0px";
 				$symbol[2] = " -72px  0px";
@@ -235,11 +238,11 @@ if (test_sosa_table($indi_xref, $tree)) {
 				echo $html_relationship . '<br><img src="' . $urlimage . '" title = "Sosa 1" alt = ""></a>';
 			}
 
-			/***** Part 2.1 Great-grandparents. Unless img/symbols.png is missing.*****/
+			/***** Part 2.1 Great-grandparents, if $ssbranch_gen !== 1 *****/
 			/* It is assumed that individuals from the first generations are hidden from not logged-in users but that the great-grandparents are visible.
 			   We therefore shift a few generations to display another root visible to all, along with the corresponding sosa number.
 			*/
-			if (($indi_sosa_num > 0) && ($ssbranch_gen !== '0')) {
+			if (($indi_sosa_num > 0) && ($ssbranch_gen !== 1)) {
 				$help_title = 'An ascending branch of a great-grandparent of the root ⇨ link to a help page…';
 				$text = calc_ssbranch($individual, $indi_sosa_num, $indi_sosa_gen,  $ssbranch_gen, $ged_id1, $vesta_extended, '-1');
 				if ($text !== "") echo '<hr><a href = "' . $url_help . '" title = "' . I18N::translate($help_title)
@@ -247,8 +250,8 @@ if (test_sosa_table($indi_xref, $tree)) {
 					. $text;
 			}
 
-			/***** Part 2.2 Personnal Sosa numbers. Unless img/image.png is  missing *****/
-			if (($logged === 1) && ($own_numbers === '1')) { // for logged-in users who are linked
+			/***** Part 2.2 Personnal Sosa numbers, if $own_numbers === '1' *****/
+			if (($logged === 1) && ($own_numbers === 1)) { // for logged-in users who are linked
 				$help_title = 'Logged-in members who are related to an individual in the tree can view the Sosa numbers of their own ancestors ⇨ link to a help page…';
 				echo '<hr><a href = "' . $url_help . '" title = "' . I18N::translate($help_title)
 					. '"><span class = "fas fa-question-circle fa-fw wt-icon-help"></span>&nbsp;</a>';
