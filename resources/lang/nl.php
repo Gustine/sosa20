@@ -37,7 +37,7 @@ return [
 'The default individual is no longer part of this tree.'
   => 'The default individual is no longer part of this tree.',
 'You are not linked to an individual in this family tree.'
-  => 'You are not linked to an individual in this family tree.',
+  => 'Je bent niet gekoppeld aan een persoon in deze stamboom.',
 '//en.wikipedia.org/wiki/Ahnentafel'
   => '//nl.wikipedia.org/wiki/Kwartierstaat',
 'An ascending branch of a great-grandparent of the root ⇨ link to a help page…'

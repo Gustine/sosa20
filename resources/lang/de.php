@@ -37,7 +37,7 @@ return [
 'The default individual is no longer part of this tree.'
   => 'The default individual is no longer part of this tree.',
 'You are not linked to an individual in this family tree.'
-  => 'You are not linked to an individual in this family tree.',
+  => 'Sie sind mit keiner Person in diesem Stammbaum verbunden.',
 '//en.wikipedia.org/wiki/Ahnentafel'
   => '//de.wikipedia.org/wiki/Ahnentafel',
 'An ascending branch of a great-grandparent of the root ⇨ link to a help page…'

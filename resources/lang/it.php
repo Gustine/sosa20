@@ -37,7 +37,7 @@ return [
 'The default individual is no longer part of this tree.'
   => 'The default individual is no longer part of this tree.',
 'You are not linked to an individual in this family tree.'
-  => 'You are not linked to an individual in this family tree.',
+  => 'Non sei collegato a nessun individuo in questo albero genealogico.',
 '//en.wikipedia.org/wiki/Ahnentafel'
   => '//it.wikipedia.org/wiki/Metodo_Sosa-Stradonitz',
 'An ascending branch of a great-grandparent of the root ⇨ link to a help page…'
@@ -146,7 +146,6 @@ return [
   => 'Si presume che gli individui delle prime generazioni siano nascosti ai visitatori, ma che gli quattro nonni della terza generazione siano visibili.',
 'It is assumed that the first generation individuals are hidden from visitors but that both parents are visible.'
   => 'Si presume che gli individui delle prime generazioni siano nascosti ai visitatori, ma che gli i due genitori siano visibili.',
-
 'We then determine which great-grandparent’s ancestor the individual is and display a small symbol representing its place on a fan diagram. Once determined, we display the great-grandparent and calculate the Sosa number corresponding to this secondary root.'
   => 'Determiniamo quindi di quale bisnonno è l’antenato dell’individuo e mostriamo un piccolo simbolo che ne rappresenta la posizione su un diagramma a ventaglio. Infine, mostriamo il bisnonno e calcoliamo il numero di Sosa corrispondente a questa radice secondaria.',
 'We then determine which grandparent’s ancestor the individual is and display a small symbol representing its place on a fan diagram. Once determined, we display the grandparent and calculate the Sosa number corresponding to this secondary root.'
@@ -161,7 +160,7 @@ return [
   => 'Sei collegato come %1$s',
 'You can only update your own numbers.'
   => 'Puoi aggiornare solo i tuoi numeri.',
-'You can update both your own numbers and those of the default individual.'
+'You can update both your own Sosa numbers and those of the default individual.'
   => 'Puoi aggiornare sia i tuoi numeri Sosa che quelli dell’individuo predefinito.',
 'You are only a visitor to this family tree.'
   => 'Sei solo un visitatore di questo albero genealogico.',
