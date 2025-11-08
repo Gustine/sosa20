@@ -70,7 +70,7 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 	use ModuleCustomTrait;
 	use ModuleSidebarTrait;
 // ┌─ Custom module version ──────────────────────
-	public const CUSTOM_VERSION = '2025.11.04';
+	public const CUSTOM_VERSION = '2025.11.07';
 // └──────────────────────────────────────────────
 	// Github repository
 	public const GITHUB_REPO = 'Gustine/sosa20';
@@ -241,7 +241,7 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 		if ( ($profile_file !== '') && file_exists(__DIR__ . '/resources/img/' . $profile_file) ) $urlimage = $this->assetUrl('img/' . $profile_file);
 		else $urlimage = '';
 
-		// Get the logged-in user
+		// Get the signed in user
 		$user_service = new UserService();
 		$user = $user_service->find(Auth::id());
 
@@ -377,7 +377,7 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 		if ( ($profile_file !== '') && file_exists(__DIR__ . '/resources/img/' . $profile_file) ) $urlimage = $this->assetUrl('img/' . $profile_file);
 		else $urlimage = '';
 
-		// Get the logged-in user
+		// Get the signed in user
 		$user_service = new UserService();
 		$user = $user_service->find(Auth::id());
 
@@ -426,24 +426,37 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 			// reset the last tree id
 			$this->setPreference('last-tree-id', '');
 		}
-
-		$ssbranch_level = $this->getPreference($tree_id . '-ssbranch_level', '3');
-		$symbols_file = $this->getPreference($tree_id . '-symbols_file', 'symbols8.png');
-		$own_numbers = $this->getPreference($tree_id . '-own_numbers', '1');
-		$profile_file = $this->getPreference($tree_id . '-profile_file', 'image.webp');
 		$reset_param = $this->getPreference($tree_id . '-reset_param', '0');
 
-		return $this->viewResponse($this->name() . '::settings', [
-			'all_trees'      => $this->tree_service->all(),
-			'title'          => $this->title(),
-			'tree_id'        => $tree_id,
-			'ssbranch_level' => $ssbranch_level,
-			'symbols_file'   => $symbols_file,
-			'own_numbers'    => $own_numbers,
-			'profile_file'   => $profile_file,
-			'reset_param'    => $reset_param,
+		if ($reset_param === '1') {
+			return $this->viewResponse($this->name() . '::settings', [
+				'all_trees'      => $this->tree_service->all(),
+				'title'          => $this->title(),
+				'tree_id'        => $tree_id,
+				'ssbranch_level' => '3',
+				'symbols_file'   => 'symbols8.png',
+				'own_numbers'    => '1',
+				'profile_file'   => 'image.webp',
+				'reset_param'    => $reset_param,
+			]);
+		}
+		else {
+			$ssbranch_level = $this->getPreference($tree_id . '-ssbranch_level', '3');
+			$symbols_file = $this->getPreference($tree_id . '-symbols_file', 'symbols8.png');
+			$own_numbers = $this->getPreference($tree_id . '-own_numbers', '1');
+			$profile_file = $this->getPreference($tree_id . '-profile_file', 'image.webp');
 
-	]);
+			return $this->viewResponse($this->name() . '::settings', [
+				'all_trees'      => $this->tree_service->all(),
+				'title'          => $this->title(),
+				'tree_id'        => $tree_id,
+				'ssbranch_level' => $ssbranch_level,
+				'symbols_file'   => $symbols_file,
+				'own_numbers'    => $own_numbers,
+				'profile_file'   => $profile_file,
+				'reset_param'    => $reset_param,
+			]);
+		}
 	}
 
 	/**
@@ -460,27 +473,18 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 		$tree_id = $params['tree-id'];
 		$this->setPreference('last-tree-id', $tree_id);
 
-		if ($params['save'] === '1') {
-			if ($params['reset_param'] !== '0') {
-				$this->setPreference($tree_id . '-ssbranch_level', '3');
-				$this->setPreference($tree_id . '-symbols_file', 'symbols8.png');
-				$this->setPreference($tree_id . '-own_numbers', '1');
-				$this->setPreference($tree_id . '-profile_file', 'image.webp');
-				$this->setPreference($tree_id . '-reset_param', '0');
+        if ($params['refresh'] === '1') {
+            $this->setPreference($tree_id . '-reset_param', $params['reset_param'] ?? '0');
+         }
+	if ($params['save'] === '1') {
+		$this->setPreference($tree_id . '-reset_param', '0');
+		$this->setPreference($tree_id . '-ssbranch_level', $params['ssbranch_level']);
+		$this->setPreference($tree_id . '-symbols_file', $params['symbols_file']);
+		$this->setPreference($tree_id . '-own_numbers', $params['own_numbers']);
+		$this->setPreference($tree_id . '-profile_file', $params['profile_file']);
 
-				$message = I18N::translate('The settings for the tree “%s” have been reset to their default values.', $this->title());
-				FlashMessages::addMessage($message, 'success');
-			}
-			else {
-				$this->setPreference($tree_id . '-ssbranch_level', $params['ssbranch_level']);
-				$this->setPreference($tree_id . '-symbols_file', $params['symbols_file']);
-				$this->setPreference($tree_id . '-own_numbers', $params['own_numbers']);
-				$this->setPreference($tree_id . '-profile_file', $params['profile_file']);
-				$this->setPreference($tree_id . '-reset_param', '0');
-
-				$message = I18N::translate('The settings for the tree “%s” have been updated.', $this->title());
-				FlashMessages::addMessage($message, 'success');
-			}
+		$message = I18N::translate('The settings for the family tree “%s” have been updated.', $this->title());
+		FlashMessages::addMessage($message, 'success');
 		}
 
 		return redirect($this->getConfigLink());
