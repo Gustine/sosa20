@@ -9,6 +9,7 @@
  * MR 2025-06 new algorithm: browse the wt_sosa table instead of testing all possible Sosa numbers
  * MR 2025-06 bug line 129 : ($gen+1)
  * MR 2025-10 if img/image.png is present, display the user's Sosa numbers (requires adding a column to the wt_sosa table)
+ * RickM 2025-11 improved wording of messages in English.
  */
 use Fisharebest\Webtrees\Auth;
 use Fisharebest\Webtrees\Functions\FunctionsPrint; 
@@ -31,17 +32,17 @@ echo '<div class="wt-main-wrapper">' ;
 		$individual = Registry::individualFactory()->make($bk_xref, $tree);
 		$indi_root = Registry::individualFactory()->make($up_xref, $tree);
 		if ($indi_root === null) echo '⁂  indi_root not found';
-		else echo '<p>gedcom n° ' . $up_gid . ' ' . I18N::translate('using %s as root', $indi_root->FullName()) . '.</p>';
+		else echo '<p>' . I18N::translate('Family tree #') . $up_gid . ' ' . I18N::translate('using %s as Sosa 1', $indi_root->FullName()) . '.</p>';
 		if (Auth::isMember($tree)) {
 			delete_all_sosas($up_gid, $user_id); /* we empty the sosas table corresponding to $up_gid */
 			$tree_array = fill_sosa_table($up_gid, $up_xref, $tree, $user_id); /* then we fill it again */
 			}
 		else {
-			echo '<p>⁂ ' . I18N::translate('You must be a member to do this.') . '</p>';
+			echo '<p>⁂ ' . I18N::translate('You need member rights, or higher, to do this.') . '</p>';
 			}
 
 		echo '</td></tr><tr><td>';
-		echo '<h3>' . I18N::translate('Back to the previous page') . ' :</h3>';
+		echo '<h3>' . I18N::translate('Return to the previous page') . ' :</h3>';
 		echo '<a href="' . $individual->url() . '">' . $individual->FullName() . '</a>';
 		}
 	echo '</td></tr></table>';
@@ -182,26 +183,26 @@ function fill_sosa_table($sosa_gid, $sosa_root_xref, $tree, $user_id)
 
 	echo ' <p>';
 	if ($OK) echo '<b>' . I18N::translate('OK') . '.</b> ';
-	echo '<b>' . I18N::translate('Sosa table is filled up to generation %s.', $top_gen) . '</b>';
+	echo '<b>' . I18N::translate('The Sosa table is complete to generation %s.', $top_gen) . '</b>';
 	$top_person = Registry::individualFactory()->make($tree_array[$top_sosa], $tree);
-	echo '<br><abbr title="' . I18N::translate('Largest Sosa number found. In the case of a pedigree collapse, common ancestors have several numbers, but only the the smallest is displayed in the sidebar.') .'">(sosa</abbr> '
+	echo '<br><abbr title="' . I18N::translate('Highest Sosa number found. In the case of a pedigree collapse, common ancestors have several numbers, only the the lowest is displayed in the sidebar.') .'">(sosa</abbr> '
 	. I18N::number($top_sosa) . ' : <a href="' . $top_person->url() . '"> ' . $top_person->FullName() . '</a>)';
 	if (!$OK) echo '<br>' . I18N::translate('But all parents may not have been found!') . ' ';
 	else {
-		echo '<br>' . I18N::translate('We checked that there were no parent in generation %s', $full_gen);
+		echo '<br>' . I18N::translate('We checked and there is no parent at generation %s', $full_gen);
 		if ($gen - $top_gen > 1) echo ' ' . I18N::translate('(pedigree collapse)') . '.'; else echo '.';
 		}
 	echo '</p>';
 
 	echo '<p>';
-	echo '<abbr title="' . I18N::translate('Maximum number of generations for which Sosa numbers will be searched. Defined in resources/views/update.phtml of module sosa20. If too small, Sosa numbers may be missing.')
+	echo '<abbr title="' . I18N::translate('Maximum number of generations for which Sosa numbers will be searched. Defined in resources/views/update.phtml of the sosa20 module. If too low, Sosa numbers may be missing.')
 	. '">maxgen</abbr> = ' . $maxgen;
 	if ($OK && ($maxgen - $top_gen > 2))
-		echo '. ' . I18N::translate('Calculation stopped at generation %s', $gen) . I18N::translate(' (no parent found so no Sosa number to calculate).');
-	if (!$OK && ($maxgen - $top_gen < 1)) echo ' ' . I18N::translate('maxgen should be increased to check that all the Sosa numbers have been calculated.') . ' ';
+		echo '. ' . I18N::translate('Calculation stopped at generation %s', $gen) . I18N::translate(' (there was no parent found therefore no Sosa numbers to calculate).');
+	if (!$OK && ($maxgen - $top_gen < 1)) echo ' ' . I18N::translate('The maxgen parameter should be increased to ensure that all the Sosa numbers have been calculated.') . ' ';
 
 	echo '<br><abbr title="' . I18N::translate('Maximum memory allocated to php. Set in php.d/01_ressourcelimits on the server (apache).') . '">memory limit</abbr> = ' .  $memory_limit . ' ⇨ ' . I18N::translate(' %s&#37 used', I18N::number($memory_peak/$memory_val * 100, $precision = 1)) . '. ';
-	if ($memory_peak >= $memory_secure) echo I18N::translate('The process was interrupted to avoid memory overflow.');
+	if ($memory_peak >= $memory_secure) echo I18N::translate('The calculation was stopped to prevent a possible php ’memory overflow’ error.');
 	echo '<br>' . I18N::translate('Elapsed time') .' = ' . round (($time_end-$time_start) * 1000, $precision = 1) . ' ms.</p>';
 
 	return $tree_array;

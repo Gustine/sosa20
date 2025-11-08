@@ -3,6 +3,7 @@
  * …/modules_v4/sosa20/resources/views/migration.phtml
  * help : https://gustine.eu/mode_emploi/sosa.php
  * MR 2025-10 each member uses it own Sosa numbers
+ * RickM 2025-11 improved wording of messages in English.
  */
 use Fisharebest\Webtrees\Auth;
 use Fisharebest\Webtrees\Functions\FunctionsPrint; 
@@ -77,11 +78,11 @@ echo '<div class="wt-main-wrapper">' ;
 	else {
 		$individual = Registry::individualFactory()->make($bk_xref, $tree);
 		if ($title === I18N::translate('Migration')) {
-			echo '<p>' . I18N::translate('The numbers calculated previously are assigned to the default user. They are visible to unregistered users and only an editor can update them.') . '</p>';
-			echo '<p>' . I18N::translate('Each registered user present in the tree will be able to generate numbers relating to them (those of their direct ancestors).') . '</p>';
+			echo '<p>' . I18N::translate('The Sosa numbers calculated previously are assigned to the default user. They are visible to unregistered users and only an editor can update them.') . '</p>';
+			echo '<p>' . I18N::translate('Each registered user present in the tree will be able to generate Sosa numbers relating to them (for their direct ancestors).') . '</p>';
 		}
 		echo '</td></tr><tr><td>';
-		echo '<h3>' . I18N::translate('Back to the previous page') . ' :</h3>';
+		echo '<h3>' . I18N::translate('Return to the previous page') . ' :</h3>';
 		echo '<a href="' . $individual->url() . '">' . $individual->FullName() . '</a>';
 		}
 	echo '</td></tr></table>';

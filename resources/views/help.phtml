@@ -4,6 +4,7 @@
  * help : https://gustine.eu/mode_emploi/sosa.php
  * MR 2025-10 new page.
  * MR 2025-11 the ssbranch_gen and own_numbers parameters now determine the display, rather than the presence of symbols.png or image.webp.
+ * RickM 2025-11 improved wording of messages in English.
  */
 
 use Fisharebest\Webtrees\Auth;
@@ -41,7 +42,7 @@ if ($user !== null) {
 
 echo '<div class="wt-main-wrapper" style="display: inline-block; max-width: 800px;">' ;
 echo '<h1>' . I18N::translate('Help for Sosa²⁰') . '</h1>';
-	echo '<p><a href="' . I18N::translate('//gustine.eu/mode_emploi/sosa-en.php') .'">' . I18N::translate('More informations on gustine.eu.') . '</a></p>';
+	echo '<p><a href="' . I18N::translate('//gustine.eu/mode_emploi/sosa-en.php') .'">' . I18N::translate('See more information at gustine.eu.') . '</a></p>';
 
 	echo '<h2>' . I18N::translate('The default individual is number&nbsp;1') . '</h2>';
 	echo '<div style="display: inline-block;"><div style="text-align: center; ">';
@@ -52,8 +53,8 @@ echo '<h1>' . I18N::translate('Help for Sosa²⁰') . '</h1>';
 		echo '<br>&nbsp;<a rel = "nofollow" href = "' . I18N::translate('//en.wikipedia.org/wiki/Ahnentafel') . '" title ="' 
 			. I18N::translate('⇨ link to Wikipedia…')
 			. '"><span class ="wikipedia"></span>&nbsp;</a>';
-		echo I18N::translate('Sosa numbers are calculated in relation to the “default individual” of the tree considered as the root (proband). Because this can take a long time, all numbers are pre-calculated and stored. A user with editor status must therefore update them from time to time.');
-		if (Auth::isEditor($tree)) echo '<br> ⇨ ' . I18N::translate('You can update the default individual numbers, which are visible to everyone.');
+		echo I18N::translate('Sosa numbers are calculated in relation to the “default individual” of the family tree considered as the root (proband). Because this can take a long time, all numbers are pre-calculated and stored. A user with editor rights, or higher, should update them from time to time.');
+		if (Auth::isEditor($tree)) echo '<br> ⇨ ' . I18N::translate('You can update the default individual Sosa numbers, which are visible to everyone.');
 		else if ($user !== null) echo '<br> ⇨ ' . I18N::translate('You’re not allowed to do that.');
 	echo '</p>';
 
@@ -63,27 +64,27 @@ if ($ssbranch_gen !== 1) {
 	case 2 :
 		echo '<h2>' . I18N::translate('A parent is number&nbsp;1') . ' <span class="symbols"> </span></h2>';
 		if ($urlhelp !== '') echo '<img src="' . $urlhelp . '" title = "Sosa 1" alt="img/help.png" class="cropped2" ><br>&nbsp;';
-		echo '<p>' . I18N::translate('It is assumed that the individuals of the first generations are hidden from visitors but that both parents are visible.') . '</p>';
+		echo '<p>' . I18N::translate('It is assumed that the first generation individuals are hidden from visitors but both parents are visible.') . '</p>';
 		echo '<p>';
-		echo I18N::translate('We then determine which parent’s ancestor the individual is and display a small symbol representing its place on a fan diagram. Finally, we display the parent and calculate the sosa number corresponding to this secondary root.');
+		echo I18N::translate('We then determine which parent’s ancestor the individual is and display a small symbol representing its place on a fan diagram. Once determined, we display the parent and calculate the Sosa number corresponding to this secondary root.');
 		echo '</p>';
 		break;
 
 	case 3 :
 		echo '<h2>' . I18N::translate('A grandparent is number&nbsp;1') . ' <span class="symbols"> </span></h2>';
 		if ($urlhelp !== '') echo '<img src="' . $urlhelp . '" title = "Sosa 1" alt="img/help.png" class="cropped2" ><br>&nbsp;';
-		echo '<p>' . I18N::translate('It is assumed that the individuals of the first generations are hidden from visitors but that the four grandparents of the third generation are visible.') . '</p>';
+		echo '<p>' . I18N::translate('It is assumed that the first generation individuals are hidden from visitors but that the four grandparents of the third generation are visible.') . '</p>';
 		echo '<p>';
-		echo I18N::translate('We then determine which grandparent’s ancestor the individual is and display a small symbol representing its place on a fan diagram. Finally, we display the grandparent and calculate the sosa number corresponding to this secondary root.');
+		echo I18N::translate('We then determine which grandparent’s ancestor the individual is and display a small symbol representing its place on a fan diagram. Once determined, we display the grandparent and calculate the Sosa number corresponding to this secondary root.');
 		echo '</p>';
 		break;
 
 	default :
 		echo '<h2>' . I18N::translate('A great-grandparent is number&nbsp;1') . ' <span class="symbols"> </span></h2>';
 		if ($urlhelp !== '') echo '<img src="' . $urlhelp . '" title = "Sosa 1" alt="img/help.png" class="cropped2" ><br>&nbsp;';
-		echo '<p>' . I18N::translate('It is assumed that the individuals of the first generations are hidden from visitors but that the eight great-grandparents of the fourth generation are visible.') . '</p>';
+		echo '<p>' . I18N::translate('It is assumed that the first generation individuals are hidden from visitors but that the eight great-grandparents of the fourth generation are visible.') . '</p>';
 		echo '<p>';
-		echo I18N::translate('We then determine which great-grandparent’s ancestor the individual is and display a small symbol representing its place on a fan diagram. Finally, we display the great-grandparent and calculate the sosa number corresponding to this secondary root.');
+		echo I18N::translate('We then determine which great-grandparent’s ancestor the individual is and display a small symbol representing its place on a fan diagram. Once determined, we display the great-grandparent and calculate the Sosa number corresponding to this secondary root.');
 		echo '</p>';
 		break;
 	}
@@ -93,24 +94,24 @@ if ($own_numbers === 1) {
 	echo '<h2>' . I18N::translate('You are number&nbsp;1') . '</h2>';
 	if ($urlhelp !== '') echo '<img src="' . $urlhelp . '" title = "Sosa 1" alt="img/help.png" class="cropped3" ><br>&nbsp;';
 	echo '<p>';
-		echo I18N::translate('Members who are connected and linked to an individual in the tree display their own numbers, calculated based on that individual. They can update these numbers. If they are editors, they can also update the numbers of the default individual, visible to everyone.');
+		echo I18N::translate('Members who are signed in and linked to an individual in the tree display their own Sosa numbers, calculated based on that individual. They can update these numbers. If they have editor rights, or higher, they can also update the numbers of the default individual, visible to everyone.');
 		if (($user !== null) && ($user_xref !== '')) {
-			echo '<br> ⇨ ' . I18N::translate('You are connected as %1$s', $user_individual->FullName()) . '.';
-			if (Auth::isEditor($tree)) echo ' ' . I18N::translate('You can update both your own numbers and those of the default individual.');
+			echo '<br> ⇨ ' . I18N::translate('You are signed in as %1$s', $user_individual->FullName()) . '.';
+			if (Auth::isEditor($tree)) echo ' ' . I18N::translate('You can update both your own Sosa numbers and those of the default individual.');
 			else {
 				if (Auth::isMember($tree))  echo ' ' . I18N::translate('You can only update your own numbers.');
-				else echo ' ' . I18N::translate('You are only a visitor to this tree.'); // It is unlikely that a link has been defined for a simple visitor.
+				else echo ' ' . I18N::translate('You are only a visitor to this family tree.'); // It is unlikely that a link has been defined for a simple visitor.
 			}
 		}
 	echo '</p>';	echo '<p>';
-		echo I18N::translate('Users who are logged in but are not linked to an individual in the tree do not have personal numbers to display. Neither do users who are not logged in.');
-		if ($user === null) echo '<br> ⇨ ' . I18N::translate('You are not logged-in.') ;
+		echo I18N::translate('Users who are signed in but are not linked to an individual in the tree do not have personal numbers to display. Neither do users who are not signed in.');
+		if ($user === null) echo '<br> ⇨ ' . I18N::translate('You are not signed in.') ;
 		if (($user !== null) && ($user_xref === '')) echo '<br> ⇨ ' . I18N::translate('You are not linked to an individual in this family tree.');
 	echo '</p>';
 
 }
 
-	echo '<hr><p>' . I18N::translate('Back to the previous page') . ' : <b><a href="' . $individual->url() . '"' . $individual->FullName() . '…</a></b></p>';
+	echo '<hr><p>' . I18N::translate('Return to the previous page') . ' : <b><a href="' . $individual->url() . '"' . $individual->FullName() . '…</a></b></p>';
 
 echo '</div>';
 

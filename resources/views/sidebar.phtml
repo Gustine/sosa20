@@ -12,6 +12,7 @@
  * MR 2025-10 if img/image.png is present, display the user's Sosa numbers (requires adding a column to the wt_sosa table).
  * MR 2025-10 built-in help page instead of a link to gustine.eu.
  * MR 2025-11 the ssbranch_gen and own_numbers parameters now determine the display, rather than the presence of symbols.png or image.webp.
+ * RickM 2025-11 improved wording of messages in English.
  */
 
 use Fisharebest\Webtrees\Auth;
@@ -114,7 +115,7 @@ echo '<script>
 */
 $tree = $individual->tree();
 $ged_id1 = $tree->id(); // current gedcom1 identifier
-if ($user !== null) $user_id = $user->id(); else $user_id = -1; // default user if not logged in
+if ($user !== null) $user_id = $user->id(); else $user_id = -1; // default user if not signed in
 $indi_xref = $individual->Xref(); // current individual xref
 $url_base = explode("individual", $individual->url()); // beginning of the url to be used for relationships charts (https://…/tree/gedcom/)
 $url_help = route('module', [
@@ -130,13 +131,13 @@ if (test_sosa_table($indi_xref, $tree)) {
 	$default_root_xref = $tree->getPreference('PEDIGREE_ROOT_ID'); // xref of the default individual of the current gedcom
 
 	if ($own_numbers === 1) {
-		if (Auth::isMember($tree)) { // logged-in user
+		if (Auth::isMember($tree)) { // signed in user
 			if ($user !== null) $user_xref = $tree->getUserPreference($user, 'gedcomid'); // or $tree->getUserPreference($user, UserInterface::PREF_TREE_ACCOUNT_XREF)
 			if ($user_xref !== '') { // user is present in the tree
 				$logged = 1; // user can update his own numbers (if member)
 				}
 			else { // user is not part of the tree
-				$user_id = -1; // considered as a not logged-in user
+				$user_id = -1; // considered as a not signed in user
 				$logged = 0; // member cannot update the numbers
 				}
 		}
@@ -153,20 +154,20 @@ if (test_sosa_table($indi_xref, $tree)) {
 	$sosa_root_xref = find_root_xref($ged_id1, -1);
 
 	if ($default_root_xref === NULL) {
-		echo I18N::translate('First, define a valid default individual for the current gedcom.') ;
+		echo I18N::translate('First, define a valid default individual for the current family tree.') ;
 	}
 	else {
 		$default_root = Registry::individualFactory()->make($default_root_xref, $tree) ;
 		if ($default_root === null) echo '<br>⁂ ' . I18N::translate('The default individual is no longer part of this tree.');
 		else if (($sosa_root_xref === null) // If the root is not found (the table is empty)…
 			|| ($default_root_xref !== $sosa_root_xref) ) { // …or if the root has changed, there is no need to go further.
-			if (Auth::isMember($tree) && ($logged > -1)) { // only logged-in members		
-				echo '<br><b>' . I18N::translate('Sosa table is empty or the tree root has been changed.') . '</b>';
+			if (Auth::isMember($tree) && ($logged > -1)) { // only signed in members		
+				echo '<br><b>' . I18N::translate('The Sosa table is empty or the default individual has been changed.') . '</b>';
 				if ($logged === 1) {
-					if (Auth::isEditor($tree)) echo '<br>' . I18N::translate('You can update both your own numbers and those of the default individual.');
+					if (Auth::isEditor($tree)) echo '<br>' . I18N::translate('You can update both your own Sosa numbers and those of the default individual.');
 					else echo '<br>' . I18N::translate('You can only update your own numbers.');
 				}
-			else if (Auth::isEditor($tree)) echo '<br>' . I18N::translate('You can update the default individual numbers, which are visible to everyone.');
+			else if (Auth::isEditor($tree)) echo '<br>' . I18N::translate('You can update the default individual Sosa numbers, which are visible to everyone.');
 			}
 			echo '<div>'; // wt-sidebar-sosa2
 		}
@@ -218,12 +219,12 @@ if (test_sosa_table($indi_xref, $tree)) {
 
 			/***** Part 2 (hidden by default, displayed on request) *****/
 			if ( ($default_root_xref !== $sosa_root_xref) && Auth::isMember($tree) ) {
-				echo I18N::translate('The default individual of the current gedcom will be used as the root for updating the Sosa numbers.');
+				echo I18N::translate('The default individual of the current family tree will be used as the root for updating the Sosa numbers.');
 			}
 
 			echo '<div id = "wt-sidebar-sosa2" class = "wt-sidebar-content">'
 				. '<a rel = "nofollow" href = "' . $url_help . '" title = "'
-				. I18N::translate('In the numbering of Sosa-Stradonitz, number one is assigned to the root of the family tree ⇨ link to a help page…')
+				. I18N::translate('The Sosa-Stradonitz numbering system assigns number one to the root of the family tree ⇨ link to a help page…')
 				. '"><span class = "fas fa-question-circle fa-fw wt-icon-help"></span>&nbsp;</a>'
 				. I18N::translate('Family tree root') . ' (Sosa&nbsp;1)&nbsp;: ';
 
@@ -239,7 +240,7 @@ if (test_sosa_table($indi_xref, $tree)) {
 			}
 
 			/***** Part 2.1 Great-grandparents, if $ssbranch_gen !== 1 *****/
-			/* It is assumed that individuals from the first generations are hidden from not logged-in users but that the great-grandparents are visible.
+			/* It is assumed that individuals from the first generations are hidden from not signed in users but that the great-grandparents are visible.
 			   We therefore shift a few generations to display another root visible to all, along with the corresponding sosa number.
 			*/
 			if (($indi_sosa_num > 0) && ($ssbranch_gen !== 1)) {
@@ -251,11 +252,11 @@ if (test_sosa_table($indi_xref, $tree)) {
 			}
 
 			/***** Part 2.2 Personnal Sosa numbers, if $own_numbers === '1' *****/
-			if (($logged === 1) && ($own_numbers === 1)) { // for logged-in users who are linked
-				$help_title = 'Logged-in members who are related to an individual in the tree can view the Sosa numbers of their own ancestors ⇨ link to a help page…';
+			if (($logged === 1) && ($own_numbers === 1)) { // for signed in users who are linked
+				$help_title = 'Signed in members who are related to an individual in the tree can view the Sosa numbers of their own ancestors ⇨ link to a help page…';
 				echo '<hr><a href = "' . $url_help . '" title = "' . I18N::translate($help_title)
 					. '"><span class = "fas fa-question-circle fa-fw wt-icon-help"></span>&nbsp;</a>';
-				if (find_root_xref($ged_id1, $user_id) !== $user_xref) echo '<br>' .  I18N::translate('First, you need to calculate your own Sosa numbers.');
+				if (find_root_xref($ged_id1, $user_id) !== $user_xref) echo '<br>' .  I18N::translate('You need to calculate your own Sosa numbers first.');
 				else { // the table has been filled with personal numbers
 					$user_sosa_num = find_sosa_num ($indi_xref, $ged_id1, $user_id);
 					$user_sosa_gen = find_sosa_gen ($indi_xref, $ged_id1, $user_id);
@@ -329,7 +330,7 @@ if (test_sosa_table($indi_xref, $tree)) {
 			echo '<hr><b>' . I18N::translate('Update your Sosa numbers') . '</b><br>';
 			admin_sosa_table($indi_xref, $ged_id1, $user_xref, $tree, $user_id);
 		}
-		// Editors can also update Sosa numbers of the default individual (visible to not logged-in users who are not logged in)
+		// Editors can also update Sosa numbers of the default individual (visible to not signed in users who are not signed in)
 		if (Auth::isEditor($tree) && ($default_root_xref !== NULL) ) {
 			if ($logged === 1) echo '<hr><b>' . I18N::translate('Update the Sosa numbers in the tree') . '</b><br>';
 			else echo '<hr><b>' . I18N::translate('Update Sosa numbers') . '</b><br>';
@@ -360,16 +361,16 @@ function admin_sosa_table($indi_xref, $ged_id, $sosa_root_xref, $tree, $user_id)
 		'bk_xref' => $indi_xref,      // current individual xref (we want to go back to this page after processing)
 		'up_gid' => $ged_id,          // gedcom identifier to be updated
 		'up_xref' => $sosa_root_xref, // root xref to be updated
-		'user_id' => $user_id,        // identifier of the logged in user
+		'user_id' => $user_id,        // identifier of the signed in user
 		'action' => 'Update',
 		] );
 
 	echo '<div class = "col-sm-12 wt-page-options-value text-center">';
-	echo '<a href="' . $url_update . '"><i>Gedcom ' . $ged_id . '</i></a> ';
+	echo '<a href="' . $url_update . '"><i>' . I18N::translate('Family tree #') . $ged_id . '</i></a> ';
 	$sosa_root = Registry::individualFactory()->make($sosa_root_xref, $tree) ;
 	if ($sosa_root === null) echo '⁂ sosa_root not found';
-	else echo I18N::translate('using %s as root', $sosa_root->FullName()) . '&nbsp;?';
-	if (find_root_xref($ged_id, $user_id) !== $sosa_root_xref) echo '<br><small>(' . I18N::translate('Sosa table is empty.') . ')</small>';
+	else echo I18N::translate('using %s as Sosa 1', $sosa_root->FullName()) . '&nbsp;?';
+	if (find_root_xref($ged_id, $user_id) !== $sosa_root_xref) echo '<br><small>(' . I18N::translate('The Sosa table is empty.') . ')</small>';
 	echo '</div>';
 }
 
@@ -390,7 +391,7 @@ function calc_ssbranch($individual, $num_sosa, $gene, $ssbranch_gen, $ged_id, $v
 		$sosa_ggp = $ind_ggp + pow(2, $ssbranch_gen-1);
 		$xref_ggp = find_sosa_xref($sosa_ggp, $ged_id, $user_id);
 		$ggp_indi = Registry::individualFactory()->make($xref_ggp, $tree);
-		if ($ggp_indi === null) return I18N::translate('⁂ The great-grandparent %1$s is missing. The Sosa table must be rebuilt.', $xref_ggp);
+		if ($ggp_indi === null) return I18N::translate('⁂ The great-grandparent %1$s is missing. The Sosa table needs rebuilding.', $xref_ggp);
 		$ssbranch_sosa = $num_sosa - pow(2, $gene-1) - ($ind_ggp-1) * pow(2, $gene-$ssbranch_gen);
 		// Explicitly format generation number and ordinal suffix
 		$generation_number = I18N::number($gene - $ssbranch_gen + 1);
@@ -478,10 +479,10 @@ function test_sosa_table($indi_xref, $tree)
 	if (!DB::schema()->hasTable('sosa')) {
 		$table_OK = 0;
 		echo '<div class = "col-sm-12 wt-page-options-value text-center">';
-		echo I18N::translate('The wt_sosa table does not exist, so we will create it.')
+		echo I18N::translate('The wt_sosa table does not exist, we need to create it.')
 			. '<br>' . I18N::translate('An error message <span style="background-color: #f8d7da">“There is no active transaction…”</span> will appear. Ignore it and reload the page.')
 			. ' <a href="' .  $url_create . '">'
-			. '<br><button class="btn btn-secondary" type="button">' . I18N::translate('Go') . '</button></a>';
+			. '<br><button class="btn btn-secondary" type="button">' . I18N::translate('continue') . '?</button></a>';
 		echo '</div>';
 	}
 
@@ -489,13 +490,13 @@ function test_sosa_table($indi_xref, $tree)
 	else if (!DB::schema()->hasColumn('sosa', 'user_id')) {
 		$table_OK = 0;
 		echo '<div class = "col-sm-12 wt-page-options-value text-center">';
-		echo I18N::translate('The structure of the wt_sosa table will need to be modified.')
+		echo I18N::translate('The structure of the wt_sosa table needs to be modified.')
 			. '<br>' . I18N::translate('An error message <span style="background-color: #f8d7da">“There is no active transaction…”</span> will appear. Ignore it and reload the page.');
 		if (!Auth::isEditor($tree)) {
-			echo '<br>' . I18N::translate('You must be an editor to do this.');
+			echo '<br>' . I18N::translate('You must have editor rights, or higher, to do this.');
 		}
 		else {
-			echo '<br><a href="' .  $url_migrate . '"><button class="btn btn-secondary" type="button">' . I18N::translate('Go') . '</button></a>';
+			echo '<br><a href="' .  $url_migrate . '"><button class="btn btn-secondary" type="button">' . I18N::translate('continue') . '?</button></a>';
 		}
 		echo '</div>';
 	}
