@@ -90,6 +90,9 @@ if ($ssbranch_gen !== 1) {
 	}
 }
 
+$url_settings = route('module', [ 'module' => '_sosa20_', 'action' => 'Admin' ] );
+if (Auth::isAdmin()) echo '<p><a href = "' . $url_settings . '"><span class = "fa-solid fa-wrench fa-fw"></span> ' . I18N::translate('Preferences') . '</a></p>';
+
 if ($own_numbers === 1) {
 	echo '<h2>' . I18N::translate('You are number&nbsp;1') . '</h2>';
 	if ($urlhelp !== '') echo '<img src="' . $urlhelp . '" title = "Sosa 1" alt="img/help.png" class="cropped3" ><br>&nbsp;';
