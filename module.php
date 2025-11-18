@@ -69,11 +69,10 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 	use ModuleConfigTrait;
 	use ModuleCustomTrait;
 	use ModuleSidebarTrait;
-// ┌─ Custom module version ──────────────────────
+// ┌─ webtrees 2.0 to 2.2 ────────────────────────
 	public const CUSTOM_VERSION = '2025.11.07';
-// └──────────────────────────────────────────────
-	// Github repository
 	public const GITHUB_REPO = 'Gustine/sosa20';
+// └──────────────────────────────────────────────
 
 	// Github API URL to get the information about the latest releases
 	public const GITHUB_API_LATEST_VERSION = 'https://api.github.com/repos/'. self::GITHUB_REPO . '/releases/latest';
@@ -101,15 +100,6 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 	}
 
 	/**
-	 * The default position for this sidebar. It can be changed in the control panel.
-	 * @return int
-	 */
-	public function defaultSidebarOrder(): int
-	{
-		return -1;
-	}
-
-	/**
 	 * The person or organisation who created this module.
 	 * @return string
 	 */
@@ -128,7 +118,7 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 	}
 
 	/**
-	 * A URL that will provide the latest stable version of this module.
+	 * Fetch the latest version of this module.
 	 * @return string
 	 */
 	public function customModuleLatestVersion(): string
@@ -208,6 +198,15 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 	}
 
 	/**
+	 * The default position for this sidebar. It can be changed in the control panel.
+	 * @return int
+	 */
+	public function defaultSidebarOrder(): int
+	{
+		return -1;
+	}
+
+	/**
 	 * @param Individual $individual
 	 * @return bool
 	 */
@@ -224,9 +223,11 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 	 */
 	public function getSidebarContent(Individual $individual): string
 	{
-		// Detect vesta_extended_relationships module
-		$vesta_extended = file_exists(__DIR__ . '/../vesta_extended_relationships/module.php') ? 1 : 0;
-
+		// Detects if the module vesta_extended_relationships is installed AND enabled
+		$status = DB::table('module')
+			->where('module_name', '=', '_vesta_extended_relationships_')
+			->value('status') ;
+		if ( ($status === 'enabled') && file_exists(__DIR__ . '/../vesta_extended_relationships/module.php') ) $vesta_extended = 1; else $vesta_extended = 0;
 		$tree = $individual->tree();
 		$tree_id = $tree->id();
 		$ssbranch_gen = (int) $this->getPreference($tree_id . '-ssbranch_level', '3') +1;
