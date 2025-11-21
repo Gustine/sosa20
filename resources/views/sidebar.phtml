@@ -13,6 +13,7 @@
  * MR 2025-10 built-in help page instead of a link to gustine.eu.
  * MR 2025-11 the ssbranch_gen and own_numbers parameters now determine the display, rather than the presence of symbols.png or image.webp.
  * RickM 2025-11 improved wording of messages in English.
+ * MR 2025-11 when neither vesta-extended-relationship nor relationship-chart are enabled.
  */
 
 use Fisharebest\Webtrees\Auth;
@@ -228,11 +229,17 @@ if (test_sosa_table($indi_xref, $tree)) {
 				. '"><span class = "fas fa-question-circle fa-fw wt-icon-help"></span>&nbsp;</a>'
 				. I18N::translate('Family tree root') . ' (Sosa&nbsp;1)&nbsp;: ';
 
-			$html_relationship =  '<a rel = "nofollow" href = "' . $url_base[0];
-			if ($vesta_extended === 1) $html_relationship .= 'vesta-relationships-4-99/';
-			else $html_relationship .= 'relationships-0-0/';
-			$html_relationship .= $indi_xref . '/' . $default_root_xref . '" title = "' . I18N::translate('Relationship with root…') . '">';
-			echo $html_relationship . $default_root->FullName() . '</a>';
+			if ($vesta_extended > -1) {
+				$html_relationship =  '<a rel = "nofollow" href = "' . $url_base[0];
+				if ($vesta_extended === 1) $html_relationship .= 'vesta-relationships-4-99/';
+				else $html_relationship .= 'relationships-0-0/';
+				$html_relationship .= $indi_xref . '/' . $default_root_xref . '" title = "' . I18N::translate('Relationship with root…') . '">';
+				echo $html_relationship . $default_root->FullName() . '</a>.';
+			}
+			else {
+				$html_relationship = ' ';
+				echo $html_relationship . $default_root->FullName() . '.';
+			}
 
 			if (($default_root_xref === $default_root_xref) && ($urlimage !== '')) {
 				$img_title = 'Sosa 1: default individual';
@@ -264,11 +271,14 @@ if (test_sosa_table($indi_xref, $tree)) {
 					$ordinal_suffix = get_ordinal_suffix($user_sosa_gen, I18N::languageTag());
 
 					// relationship between the current individual and the root
-					$relationship_html = '<a rel = "nofollow" href = "' . $url_base[0];
-					if ($vesta_extended === 1) $relationship_html .= 'vesta-relationships-4-99/';
-					else $relationship_html .= 'relationships-1-0/';
-					$relationship_html .= $indi_xref . '/' . $user_xref
-						. '" title = "' . I18N::translate('Relationship') . '…"> ';
+					if ($vesta_extended > -1) {
+						$relationship_html = '<a rel = "nofollow" href = "' . $url_base[0];
+						if ($vesta_extended === 1) $relationship_html .= 'vesta-relationships-4-99/';
+						else $relationship_html .= 'relationships-1-0/';
+						$relationship_html .= $indi_xref . '/' . $user_xref
+							. '" title = "' . I18N::translate('Relationship') . '…"> ';
+					}
+					else $relationship_html = ' ';
 
 					// relationship between the current individual and you
 					$relationship_service = new RelationshipService();
@@ -279,40 +289,38 @@ if (test_sosa_table($indi_xref, $tree)) {
 						$individual->FullName(),
 						I18N::number($user_sosa_num),
 						$user_sosa_gen . $ordinal_suffix)
-						. $relationship_html . $user_individual->FullName() . '</a>';
-
-						/* Variation: “is your Sosa.” More elegant, but does not alert the user to an identity error
-						   or incorrect relationship with the root (if it has changed, for example). */
-						/* echo I18N::translate('%1$s is %2$s Sosa %3$s (%4$s&nbsp;generation)',
-						$individual->FullName(),
-						$relationship_html . I18N::translate('your') . '</a>',
-						I18N::number($user_sosa_num),
-						$user_sosa_gen . $ordinal_suffix); */
+						. $relationship_html . $user_individual->FullName();
 
 						if ($relationship_name !== "") { // if not a close relative, nothing is displayed
 							$html_relationship = '&nbsp;: ' . '<a rel = "nofollow" href = "' . $url_base[0];
-							if ($vesta_extended === 1) $html_relationship .= 'vesta-relationships-4-99/';
-							else $html_relationship .= 'relationships-0-0/';
-							$html_relationship .= $indi_xref . '/' . $user_xref . '">' .  $relationship_name . '</a>.';
-							echo $html_relationship;
+							if ($vesta_extended > -1) {
+								if ($vesta_extended === 1) $html_relationship .= 'vesta-relationships-4-99/';
+								else $html_relationship .= 'relationships-0-0/';
+								$html_relationship .= $indi_xref . '/' . $user_xref . '">' .  $relationship_name . '</a>.';
+								echo $html_relationship;
+							}
+							else echo '.';
 						}
-						else echo '.';
+						else echo '</a>.';
 					}
 					else if ($user_sosa_num == 1) { // you are the current individual
-						echo I18N::translate('My page');
+						echo I18N::translate('My page') . '.';
 						}
 					else { // not an ancestor
 						echo I18N::translate('%1$s is not an ancestor of', $individual->FullName())
-						. $relationship_html . $user_individual->FullName() . '</a>';
+						. $relationship_html . $user_individual->FullName();
 
 						if ($relationship_name !== "") { // if not a close relative, nothing is displayed
-							$html_relationship = '&nbsp;: ' . '<a rel = "nofollow" href = "' . $url_base[0];
-							if ($vesta_extended === 1) $html_relationship .= 'vesta-relationships-4-99/';
-							else $html_relationship .= 'relationships-0-0/';
-							$html_relationship .= $indi_xref . '/' . $user_xref . '">' .  $relationship_name . '</a>.';
-							echo $html_relationship;
+							if ($vesta_extended > -1) {
+								$html_relationship = '&nbsp;: ' . '<a rel = "nofollow" href = "' . $url_base[0];
+								if ($vesta_extended === 1) $html_relationship .= 'vesta-relationships-4-99/';
+								else $html_relationship .= 'relationships-0-0/';
+								$html_relationship .= $indi_xref . '/' . $user_xref . '">' .  $relationship_name . '</a>.';
+								echo $html_relationship;
+							}
+							else echo '.';
 						}
-						else echo '.';
+						else echo '</a>.';
 					}
 				} // end table filled
 			} // end Personnal Sosa numbers
@@ -400,13 +408,16 @@ function calc_ssbranch($individual, $num_sosa, $gene, $ssbranch_gen, $ged_id, $v
 		$out = I18N::translate('%1$s is Sosa %2$s (%3$s&nbsp;generation) of',
 			$individual->FullName(),
 			I18N::number($ssbranch_sosa),
-			$generation_number . $ordinal_suffix)
-			. '<a rel = "nofollow" href = "' . $url_base[0];
-		if ($vesta_extended === 1) $out .= 'vesta-relationships-4-99/';
-		else $out .= 'relationships-1-0/';
-		$out .= $indi_xref . '/' . $xref_ggp
-			. '" title = "' . I18N::translate('Relationship') . '…"> '
-			. $ggp_indi->FullName() . '.</a>';
+			$generation_number . $ordinal_suffix);
+		if ($vesta_extended > -1) {
+			$out .= '<a rel = "nofollow" href = "' . $url_base[0];
+			if ($vesta_extended === 1) $out .= 'vesta-relationships-4-99/';
+			else $out .= 'relationships-1-0/';
+			$out .= $indi_xref . '/' . $xref_ggp
+				. '" title = "' . I18N::translate('Relationship') . '…"> '
+				. $ggp_indi->FullName() . '</a>.';
+		}
+		else $out .= ' ' . $ggp_indi->FullName() . '.';
 	}
 	else $out = "";
 	return $out;
