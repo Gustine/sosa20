@@ -30,6 +30,7 @@
  * MR 2025-10 if img/image.png is present, display the user's Sosa numbers (requires adding a column to the wt_sosa table).
  * MR 2025-10 built-in help page instead of a link to gustine.eu.
  * MR 2025-11 a settings page makes it easy to manage multiple trees (profile image, symbols, number of generations).
+ * MR 2025-11 when neither vesta-extended-relationship nor relationship-chart are enabled.
  */
 
 declare(strict_types=1);
@@ -227,7 +228,13 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 		$status = DB::table('module')
 			->where('module_name', '=', '_vesta_extended_relationships_')
 			->value('status') ;
-		if ( ($status === 'enabled') && file_exists(__DIR__ . '/../vesta_extended_relationships/module.php') ) $vesta_extended = 1; else $vesta_extended = 0;
+		if ( ($status === 'enabled') && file_exists(__DIR__ . '/../vesta_extended_relationships/module.php') ) $vesta_extended = 1; 
+		else {
+			$status = DB::table('module')
+				->where('module_name', '=', 'relationships_chart')
+				->value('status') ;
+			if ($status === 'enabled') $vesta_extended = 0; else $vesta_extended = -1;
+		}
 		$tree = $individual->tree();
 		$tree_id = $tree->id();
 		$ssbranch_gen = (int) $this->getPreference($tree_id . '-ssbranch_level', '3') +1;
