@@ -3,13 +3,14 @@
  * …/modules_v4/sosa20/resources/views/update.phtml
  * help : https://gustine.eu/mode_emploi/sosa.php
  * MR 2022-05 registry::individualFactory()->make() instead of deprecated Individual::getInstance().
- * MR 2022-09 error indi_root not found
+ * MR 2022-09 error indi_root not found.
  * MR 2023-06 simplified fill_sosa_table function.
  * MR 2025-05 the memory used by the update is limited to avoid overflows and the calculation is stopped when all the Sosa numbers have been found.
- * MR 2025-06 new algorithm: browse the wt_sosa table instead of testing all possible Sosa numbers
- * MR 2025-06 bug line 129 : ($gen+1)
- * MR 2025-10 if img/image.png is present, display the user's Sosa numbers (requires adding a column to the wt_sosa table)
+ * MR 2025-06 new algorithm: browse the wt_sosa table instead of testing all possible Sosa numbers.
+ * MR 2025-06 bug line 129 : ($gen+1).
+ * MR 2025-10 if img/image.png is present, display the user's Sosa numbers (requires adding a column to the wt_sosa table).
  * RickM 2025-11 improved wording of messages in English.
+ * MR 2025-12 when memory_limit == -1 (no limit).
  */
 use Fisharebest\Webtrees\Auth;
 use Fisharebest\Webtrees\Functions\FunctionsPrint; 
@@ -94,15 +95,18 @@ function fill_sosa_table($sosa_gid, $sosa_root_xref, $tree, $user_id)
 	 * Pour traiter toutes les générations, il faudra peut-être augmenter memory_limit dans php.d/01_ressourcelimits sur le serveur.
 	 */
 	$memory_limit = ini_get('memory_limit'); // set in php.d/ressourcelimits.ini
-	$memory_val = trim($memory_limit);
-	$memory_last = strtolower($memory_val[strlen($memory_val)-1]);
-	$memory_val = substr($memory_val, 0, -1);
-	switch($memory_last) {
-		case 'g': $memory_val *= 1024;
-		case 'm': $memory_val *= 1024;
-		case 'k': $memory_val *= 1024;
+	$memory_val = trim($memory_limit); // probably useless
+	if ($memory_val !== "-1") { // no limit
+		$memory_last = strtolower($memory_val[strlen($memory_val)-1]);
+		$memory_val = (float)substr($memory_val, 0, -1);
+		switch($memory_last) {
+			case 'g': $memory_val *= 1024;
+			case 'm': $memory_val *= 1024;
+			case 'k': $memory_val *= 1024;
+			}
+		$memory_secure = 0.75 * $memory_val; // safety margin to prevent memory overflow
 		}
-	$memory_secure = 0.75 * $memory_val; // safety margin to prevent memory overflow
+	else $memory_secure = 1.E12;
 
 	echo '<style> .test { color: darkgreen;  display: none;} </style>'; // test
 	$test = 40; // generation from which test information is displayed
@@ -201,7 +205,9 @@ function fill_sosa_table($sosa_gid, $sosa_root_xref, $tree, $user_id)
 		echo '. ' . I18N::translate('Calculation stopped at generation %s', $gen) . I18N::translate(' (there was no parent found therefore no Sosa numbers to calculate).');
 	if (!$OK && ($maxgen - $top_gen < 1)) echo ' ' . I18N::translate('The maxgen parameter should be increased to ensure that all the Sosa numbers have been calculated.') . ' ';
 
-	echo '<br><abbr title="' . I18N::translate('Maximum memory allocated to php. Set in php.d/01_ressourcelimits on the server (apache).') . '">memory limit</abbr> = ' .  $memory_limit . ' ⇨ ' . I18N::translate(' %s&#37 used', I18N::number($memory_peak/$memory_val * 100, $precision = 1)) . '. ';
+	if ($memory_val !== "-1") echo '<br><abbr title="' . I18N::translate('Maximum memory allocated to php. Set in php.d/01_ressourcelimits on the server (apache).') . '">memory limit</abbr> = ' .  $memory_limit . ' ⇨ ' . I18N::translate(' %s&#37 used', I18N::number($memory_peak/$memory_val * 100, $precision = 1)) . '. ';
+	else echo '<br><abbr title="' . I18N::translate('Maximum memory allocated to php. Set in php.d/01_ressourcelimits on the server (apache).') . '">memory limit</abbr> = ' .  $memory_limit . ' (no limit).';
+
 	if ($memory_peak >= $memory_secure) echo I18N::translate('The calculation was stopped to prevent a possible php ’memory overflow’ error.');
 	echo '<br>' . I18N::translate('Elapsed time') .' = ' . round (($time_end-$time_start) * 1000, $precision = 1) . ' ms.</p>';
 
