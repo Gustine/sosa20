@@ -31,6 +31,7 @@
  * MR 2025-10 built-in help page instead of a link to gustine.eu.
  * MR 2025-11 a settings page makes it easy to manage multiple trees (profile image, symbols, number of generations).
  * MR 2025-11 when neither vesta-extended-relationship nor relationship-chart are enabled.
+ * MR 2025-12 when memory_limit == -1 (no limit).
  */
 
 declare(strict_types=1);
@@ -71,7 +72,7 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 	use ModuleCustomTrait;
 	use ModuleSidebarTrait;
 // ┌─ webtrees 2.0 to 2.2 ────────────────────────
-	public const CUSTOM_VERSION = '2025.11.07';
+	public const CUSTOM_VERSION = '2025.12.17';
 	public const GITHUB_REPO = 'Gustine/sosa20';
 // └──────────────────────────────────────────────
 
