@@ -30,8 +30,9 @@
  * MR 2025-10 if img/image.png is present, display the user's Sosa numbers (requires adding a column to the wt_sosa table).
  * MR 2025-10 built-in help page instead of a link to gustine.eu.
  * MR 2025-11 a settings page makes it easy to manage multiple trees (profile image, symbols, number of generations).
- * MR 2025-11 when neither vesta-extended-relationship nor relationship-chart are enabled.
+ * MR 2025-11 when neither vesta_extended_relationship nor relationship-chart are enabled.
  * MR 2025-12 when memory_limit == -1 (no limit).
+ * MR 2026-01 when vesta_extended_relationship is enabled but vesta_common is disabled (for example, if the version of vesta is lower than that of webtrees).
  */
 
 declare(strict_types=1);
@@ -225,11 +226,14 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 	 */
 	public function getSidebarContent(Individual $individual): string
 	{
-		// Detects if the module vesta_extended_relationships is installed AND enabled
-		$status = DB::table('module')
+		// Detects if the module vesta_extended_relationships is installed AND enabled, AND if vesta_common is enabled.
+		$status_extended = DB::table('module')
 			->where('module_name', '=', '_vesta_extended_relationships_')
 			->value('status') ;
-		if ( ($status === 'enabled') && file_exists(__DIR__ . '/../vesta_extended_relationships/module.php') ) $vesta_extended = 1; 
+		$status_common = DB::table('module')
+			->where('module_name', '=', '_vesta_common_')
+			->value('status') ;
+		if ( ($status_extended === 'enabled') && ($status_common === 'enabled') && file_exists(__DIR__ . '/../vesta_extended_relationships/module.php') ) $vesta_extended = 1; 
 		else {
 			$status = DB::table('module')
 				->where('module_name', '=', 'relationships_chart')
