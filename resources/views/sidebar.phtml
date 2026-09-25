@@ -14,10 +14,12 @@
  * MR 2025-11 the ssbranch_gen and own_numbers parameters now determine the display, rather than the presence of symbols.png or image.webp.
  * RickM 2025-11 improved wording of messages in English.
  * MR 2025-11 when neither vesta-extended-relationship nor relationship-chart are enabled.
+ * MR 2026-09 webtrees 2.3 : new syntax ModuleAction for routes.
  */
 
 use Fisharebest\Webtrees\Auth;
 use Fisharebest\Webtrees\Functions\FunctionsPrint;
+use Fisharebest\Webtrees\Http\RequestHandlers\ModuleAction;
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
 use Fisharebest\Webtrees\Registry;
@@ -119,12 +121,17 @@ $ged_id1 = $tree->id(); // current gedcom1 identifier
 if ($user !== null) $user_id = $user->id(); else $user_id = -1; // default user if not signed in
 $indi_xref = $individual->Xref(); // current individual xref
 $url_base = explode("individual", $individual->url()); // beginning of the url to be used for relationships charts (https://…/tree/gedcom/)
-$url_help = route('module', [
+$url_help = route(ModuleAction::class, [
 	'module' => '_sosa20_',
 	'bk_gid' => $tree->id(),      // current gedcom identifier
 	'bk_xref' => $indi_xref,      // current individual xref (we want to go back to this page after reading)
 	'action' => 'Help',
 	] );
+
+// test CSS (n’agit que lorsque le module Sosa est actif, donc seulement sur les pages individuelles)
+if  ($tree->Name() === 'LeDu-Menou') {
+	echo '<style> .wt-main-wrapper { border: solid 5px green; } </style>';
+	}
 
 /***** First we check that the sosa table exists, otherwise, you are prompted to create it
        (after being informed of the unexpected error message that will appear). *****/
@@ -363,7 +370,9 @@ if (test_sosa_table($indi_xref, $tree)) {
  */
 function admin_sosa_table($indi_xref, $ged_id, $sosa_root_xref, $tree, $user_id)
 {
-	$url_update = route('module', [
+//route(ModuleAction::class, ['module' => 'hourglass_chart', 'action' => 'Ancestors', 'xref' => $family->husband()->childFamilies()->first()->xref(), 'tree' => $family->husband()->childFamilies()->first()->tree()->name()])
+
+	$url_update = route(ModuleAction::class, [
 		'module' => '_sosa20_',
 		'bk_gid' => $tree->id(),      // current gedcom identifier
 		'bk_xref' => $indi_xref,      // current individual xref (we want to go back to this page after processing)
@@ -473,14 +482,14 @@ function find_root_xref($sosa_gid, $user_id)
  */
 function test_sosa_table($indi_xref, $tree)
 {
-	$url_create = route('module', [
+	$url_create = route(ModuleAction::class, [
 		'module' => '_sosa20_',
 		'bk_gid' => $tree->id(),      // current gedcom identifier
 		'bk_xref' => $indi_xref,      // current individual xref (we want to go back to this page after processing)
 		'action' => 'Create',
 		] );
 
-	$url_migrate = route('module', [
+	$url_migrate = route(ModuleAction::class, [
 		'module' => '_sosa20_',
 		'bk_gid' => $tree->id(),      // current gedcom identifier
 		'bk_xref' => $indi_xref,      // current individual xref (we want to go back to this page after processing)

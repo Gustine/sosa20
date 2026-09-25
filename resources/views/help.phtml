@@ -5,10 +5,12 @@
  * MR 2025-10 new page.
  * MR 2025-11 the ssbranch_gen and own_numbers parameters now determine the display, rather than the presence of symbols.png or image.webp.
  * RickM 2025-11 improved wording of messages in English.
+ * MR 2026-09 webtrees 2.3 : new syntax ModuleAction for routes.
  */
 
 use Fisharebest\Webtrees\Auth;
 use Fisharebest\Webtrees\Functions\FunctionsPrint; 
+use Fisharebest\Webtrees\Http\RequestHandlers\ModuleAction;
 use Fisharebest\Webtrees\I18N; 
 use Fisharebest\Webtrees\Individual;
 use Fisharebest\Webtrees\Registry;
@@ -90,7 +92,7 @@ if ($ssbranch_gen !== 1) {
 	}
 }
 
-$url_settings = route('module', [ 'module' => '_sosa20_', 'action' => 'Admin' ] );
+$url_settings = route(ModuleAction::class, [ 'module' => '_sosa20_', 'action' => 'Admin' ] );
 if (Auth::isAdmin()) echo '<p><a href = "' . $url_settings . '"><span class = "fa-solid fa-wrench fa-fw"></span> ' . I18N::translate('Preferences') . '</a></p>';
 
 if ($own_numbers === 1) {
