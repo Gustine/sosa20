@@ -128,11 +128,6 @@ $url_help = route(ModuleAction::class, [
 	'action' => 'Help',
 	] );
 
-// test CSS (n’agit que lorsque le module Sosa est actif, donc seulement sur les pages individuelles)
-if  ($tree->Name() === 'LeDu-Menou') {
-	echo '<style> .wt-main-wrapper { border: solid 5px green; } </style>';
-	}
-
 /***** First we check that the sosa table exists, otherwise, you are prompted to create it
        (after being informed of the unexpected error message that will appear). *****/
 if (test_sosa_table($indi_xref, $tree)) {
@@ -370,8 +365,6 @@ if (test_sosa_table($indi_xref, $tree)) {
  */
 function admin_sosa_table($indi_xref, $ged_id, $sosa_root_xref, $tree, $user_id)
 {
-//route(ModuleAction::class, ['module' => 'hourglass_chart', 'action' => 'Ancestors', 'xref' => $family->husband()->childFamilies()->first()->xref(), 'tree' => $family->husband()->childFamilies()->first()->tree()->name()])
-
 	$url_update = route(ModuleAction::class, [
 		'module' => '_sosa20_',
 		'bk_gid' => $tree->id(),      // current gedcom identifier
