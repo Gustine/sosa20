@@ -33,8 +33,9 @@
  * MR 2026-01 when vesta_extended_relationship is enabled but vesta_common is disabled.
  ┌─────────────────────────────────────────────────────────────────┐
  │ MR 2026-09 webtrees 2.3 compatibility update                    │
+ │            latest-version.txt instead of GuzzleHttp             │
  │            Registry::container() instead of new UserService()   │
- │            Translation::fromPhpStream  ???                      │
+ │            Translation::fromPhpFile                             │
  └─────────────────────────────────────────────────────────────────┘
  */
 
@@ -490,19 +491,19 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 	 * @return array
 	 */
 	public function customTranslations(string $language): array
-	{
-		$file = $this->resourcesFolder() . 'lang/' . $language . '.php';
-		$stream       = fopen($file, 'rb');
-		$translations = Translation::fromPhpStream($stream)->toArray();
-		fclose($stream);
-
-		return $translations;
+    {
+		$langPhpFile = $this->resourcesFolder() . 'lang/' . $language . '.php';
+		if (is_readable($langPhpFile)) {
+			return Translation::fromPhpFile($langPhpFile)->toArray();
+		}
+		return [];
 	}
 
 }; // end class
-/*
+
 if (version_compare(Webtrees::VERSION, '2.3', '<')) {
 	FlashMessages::addMessage('This version of module ’sosa20’ requires webtrees ≥ 2.3. Use 2025.12.17 instead.', 'success');
+	return;
 }
-*/
+
 return Registry::container()->get(SosaModule::class);
