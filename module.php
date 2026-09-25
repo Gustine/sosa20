@@ -1,7 +1,7 @@
 <?php
 /**
  * webtrees: online genealogy
- * Copyright (C) 2025 webtrees development team
+ * Copyright (C) 2026 webtrees development team
  * GPLv3 https://www.gnu.org/licenses/gpl-3.0.html
  */
 
@@ -18,9 +18,7 @@
  * MR 2023-03 use vesta_extended_relationships if exists.
  * MR 2023-07 add close relationship to me (registered user only).
  * bernatbanyuls 2024-09 translations into Spanish and Catalan.
- ┌──────────────────────────────────────────────┐
- │ MR 2024-11 webtrees 2.2 compatibility update │
- └──────────────────────────────────────────────┘
+ * MR 2024-11 webtrees 2.2 compatibility update.
  * MR 2024-11 compact mode : hide the title of the Sosa block.
  * MR 2025-02 if img/symbols.png is present, add small fan-shaped diagrams and display the relevant great-grandparent.
  * MR 2025-05 the memory used by the update is limited to avoid overflows and the calculation is stopped when all the Sosa numbers have been found.
@@ -32,7 +30,12 @@
  * MR 2025-11 a settings page makes it easy to manage multiple trees (profile image, symbols, number of generations).
  * MR 2025-11 when neither vesta_extended_relationship nor relationship-chart are enabled.
  * MR 2025-12 when memory_limit == -1 (no limit).
- * MR 2026-01 when vesta_extended_relationship is enabled but vesta_common is disabled (for example, if the version of vesta is lower than that of webtrees).
+ * MR 2026-01 when vesta_extended_relationship is enabled but vesta_common is disabled.
+ ┌─────────────────────────────────────────────────────────────────┐
+ │ MR 2026-09 webtrees 2.3 compatibility update                    │
+ │            Registry::container() instead of new UserService()   │
+ │            Translation::fromPhpStream  ???                      │
+ └─────────────────────────────────────────────────────────────────┘
  */
 
 declare(strict_types=1);
@@ -43,10 +46,8 @@ use Fisharebest\Webtrees\FlashMessages;
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
 use Fisharebest\Webtrees\Module\AbstractModule;
-
 use Fisharebest\Webtrees\Module\ModuleConfigInterface;
 use Fisharebest\Webtrees\Module\ModuleConfigTrait;
-
 use Fisharebest\Webtrees\Module\ModuleCustomInterface;
 use Fisharebest\Webtrees\Module\ModuleCustomTrait;
 use Fisharebest\Webtrees\Module\ModuleSidebarInterface;
@@ -58,11 +59,9 @@ use Fisharebest\Webtrees\View;
 use Fisharebest\Webtrees\Tree;
 use Fisharebest\Webtrees\Webtrees;
 use Fisharebest\Webtrees\Auth;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Database\Capsule\Manager as DB;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Illuminate\Database\Capsule\Manager as DB;
 
 /**
  * A sidebar to show Sosa-Stradonitz informations of an individual
@@ -72,14 +71,13 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 	use ModuleConfigTrait;
 	use ModuleCustomTrait;
 	use ModuleSidebarTrait;
-// ┌─ webtrees 2.0 to 2.2 ────────────────────────
-	public const CUSTOM_VERSION = '2025.12.17';
+// ┌─ webtrees 2.3 ───────────────────────────────
+	public const CUSTOM_VERSION = '2026.09.25';
 	public const GITHUB_REPO = 'Gustine/sosa20';
 // └──────────────────────────────────────────────
 
 	// Github API URL to get the information about the latest releases
-	public const GITHUB_API_LATEST_VERSION = 'https://api.github.com/repos/'. self::GITHUB_REPO . '/releases/latest';
-	public const GITHUB_API_TAG_NAME_PREFIX = '"tag_name":"';
+	public const LATEST_VERSION_URL = 'https://raw.githubusercontent.com/'. self::GITHUB_REPO . '/main/latest-version.txt';
 
 	/** @var TreeService */
 	private $tree_service;
@@ -126,46 +124,28 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 	 */
 	public function customModuleLatestVersion(): string
 	{
-		// No update URL provided.
-		if (self::GITHUB_API_LATEST_VERSION === '') {
-			return $this->customModuleVersion();
-		}
 		return Registry::cache()->file()->remember(
 			$this->name() . '-latest-version',
 			function (): string {
-				try {
-					$client = new Client(
-						[
-						'timeout' => 3,
-						]
-					);
+				$latest = trim((string) @file_get_contents(self::LATEST_VERSION_URL));
 
-					$response = $client->get(self::GITHUB_API_LATEST_VERSION);
-
-					if ($response->getStatusCode() === StatusCodeInterface::STATUS_OK) {
-						$content = $response->getBody()->getContents();
-						preg_match_all('/' . self::GITHUB_API_TAG_NAME_PREFIX . '\d+\.\d+\.\d+/', $content, $matches, PREG_OFFSET_CAPTURE);
-
-						if(!empty($matches[0]))
-						{
-							$version = $matches[0][0][0];
-							$version = substr($version, strlen(self::GITHUB_API_TAG_NAME_PREFIX));	
-						}
-						else
-						{
-							$version = $this->customModuleVersion();
-						}
-
-						return $version;
-					}
-				} catch (GuzzleException $ex) {
-					// Can't connect to the server?
+				if (preg_match('/^v?(\d+\.\d+\.\d+(?:[-+][A-Za-z0-9.\-]+)?)$/', $latest, $match) === 1) {
+					return $match[1];
 				}
 
 				return $this->customModuleVersion();
 			},
 			86400
 		);
+	}
+
+	/**
+	 * A URL that will provide the latest stable version of this module.
+	 * @return string
+	 */
+	public function customModuleLatestVersionUrl(): string
+	{
+		return self::LATEST_VERSION_URL;
 	}
 
 	/**
@@ -255,7 +235,7 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 		else $urlimage = '';
 
 		// Get the signed in user
-		$user_service = new UserService();
+		$user_service = Registry::container()->get(UserService::class);
 		$user = $user_service->find(Auth::id());
 
 		return view($this->name() . '::sidebar', [
@@ -391,7 +371,7 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 		else $urlimage = '';
 
 		// Get the signed in user
-		$user_service = new UserService();
+		$user_service = Registry::container()->get(UserService::class);
 		$user = $user_service->find(Auth::id());
 
 		// Check for help.png
@@ -512,15 +492,17 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 	public function customTranslations(string $language): array
 	{
 		$file = $this->resourcesFolder() . 'lang/' . $language . '.php';
+		$stream       = fopen($file, 'rb');
+		$translations = Translation::fromPhpStream($stream)->toArray();
+		fclose($stream);
 
-		return file_exists($file) ? (new Translation($file))->asArray() : [];
+		return $translations;
 	}
 
 }; // end class
-
-if (version_compare(Webtrees::VERSION, '2.2.0', '>=')) {
-	return Registry::container()->get(SosaModule::class);
+/*
+if (version_compare(Webtrees::VERSION, '2.3', '<')) {
+	FlashMessages::addMessage('This version of module ’sosa20’ requires webtrees ≥ 2.3. Use 2025.12.17 instead.', 'success');
 }
-else {
-	return app(SosaModule::class);
-}
+*/
+return Registry::container()->get(SosaModule::class);
