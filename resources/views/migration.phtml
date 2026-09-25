@@ -4,6 +4,7 @@
  * help : https://gustine.eu/mode_emploi/sosa.php
  * MR 2025-10 each member uses it own Sosa numbers
  * RickM 2025-11 improved wording of messages in English.
+ * MR 2026-09 increase sosa_xref from 11 to 20 characters
  */
 use Fisharebest\Webtrees\Auth;
 use Fisharebest\Webtrees\Functions\FunctionsPrint; 
@@ -20,7 +21,7 @@ if (!DB::schema()->hasTable('sosa')) {
 	try {
 		DB::schema()->create('sosa', function (Blueprint $table): void {
 			$table->increments('sosa_id');
-			$table->string('sosa_xref', 11);
+			$table->string('sosa_xref', 20);
 			$table->biginteger('sosa_num');
 			$table->integer('sosa_gen');
 			$table->integer('sosa_gid');
@@ -44,7 +45,7 @@ if (!DB::schema()->hasColumn('sosa', 'user_id')) {
 	try {
 		DB::schema()->create('sosa', function (Blueprint $table): void {
 			$table->increments('sosa_id');
-			$table->string('sosa_xref', 11);
+			$table->string('sosa_xref', 20);
 			$table->biginteger('sosa_num');
 			$table->integer('sosa_gen');
 			$table->integer('sosa_gid');
