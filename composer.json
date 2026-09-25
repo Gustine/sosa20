@@ -1,0 +1,44 @@
+{
+    "version": "2026.09.25",
+    "time": "2026-09-25",
+    "conflict": {
+        "fisharebest/webtrees": ">=2.3.0"
+    },
+    "name": "gustine/sosa20",
+    "description": "A sidebar showing Sosa-Stradonitz number of individuals.",
+    "extra": {
+        "custom-module-manager": {
+            "module_name": "_sosa20_",
+            "update_service": "GithubModuleUpdate",
+            "params": {
+                "github_repo": "gustine/sosa20",
+                "category": "frontend_sidebar",
+                "title": "Sosa-Stradonitz (Ahnentafel)",
+                "description": "A sidebar showing Sosa-Stradonitz number of individuals."
+            },
+            "date_added": ""
+        }
+    },
+    "require": {
+        "php": ">=8.3",
+    },
+    "authors": [
+        {
+            "name": "gustine@ovh.fr"
+        }
+    ]
+    "homepage": "https://github.com/Gustine/sosa20",
+    "type": "webtrees-module",
+    "keywords": [
+        "webtrees",
+        "custom module",
+        "sosa"
+    ],
+    "license": "GPL-3.0-or-later",
+    "repositories": [
+        {
+            "url": "https://github.com/Gustine/sosa20.git",
+            "type": "git"
+        }
+    ],
+}
