@@ -42,9 +42,9 @@
 declare(strict_types=1);
 
 use Fig\Http\Message\StatusCodeInterface;
-use Fisharebest\Localization\Translation;
 use Fisharebest\Webtrees\FlashMessages;
 use Fisharebest\Webtrees\I18N;
+use Fisharebest\Webtrees\I18N\Translation;
 use Fisharebest\Webtrees\Individual;
 use Fisharebest\Webtrees\Module\AbstractModule;
 use Fisharebest\Webtrees\Module\ModuleConfigInterface;
