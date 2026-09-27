@@ -269,12 +269,7 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 		$up_xref = $request->getQueryParams()['up_xref'];
 		$user_id = $request->getQueryParams()['user_id'];
 
-		if (version_compare(Webtrees::VERSION, '2.2.0', '>=')) {
-			$tree = Registry::container()->get(TreeService::class)->find(intval($bk_gid, 10));
-		}
-		else {
-			$tree = app(TreeService::class)->find(intval($bk_gid, 10));
-		}
+		$tree = Registry::container()->get(TreeService::class)->find(intval($bk_gid, 10));
 
 		return $this->viewResponse($this->name() . '::update', [
 			'title' => I18N::translate("Updating Sosa numbers"),
@@ -299,11 +294,7 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 		$bk_gid = $request->getQueryParams()['bk_gid'];
 		$bk_xref = $request->getQueryParams()['bk_xref'];
 
-		if (version_compare(Webtrees::VERSION, '2.2.0', '>=')) {
-			$tree = Registry::container()->get(TreeService::class)->find(intval($bk_gid, 10));
-		} else {
-			$tree = app(TreeService::class)->find(intval($bk_gid, 10));
-		}
+		$tree = Registry::container()->get(TreeService::class)->find(intval($bk_gid, 10));
 
 		return $this->viewResponse($this->name() . '::migration', [
 			'title' => I18N::translate("Creation"),
@@ -325,11 +316,7 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 		$bk_gid = $request->getQueryParams()['bk_gid'];
 		$bk_xref = $request->getQueryParams()['bk_xref'];
 
-		if (version_compare(Webtrees::VERSION, '2.2.0', '>=')) {
-			$tree = Registry::container()->get(TreeService::class)->find(intval($bk_gid, 10));
-		} else {
-			$tree = app(TreeService::class)->find(intval($bk_gid, 10));
-		}
+		$tree = Registry::container()->get(TreeService::class)->find(intval($bk_gid, 10));
 
 		return $this->viewResponse($this->name() . '::migration', [
 			'title' => I18N::translate("Migration"),
@@ -354,11 +341,8 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 		$bk_gid = $request->getQueryParams()['bk_gid'];
 		$bk_xref = $request->getQueryParams()['bk_xref'];
 
-		if (version_compare(Webtrees::VERSION, '2.2.0', '>=')) {
-			$tree = Registry::container()->get(TreeService::class)->find(intval($bk_gid, 10));
-		} else {
-			$tree = app(TreeService::class)->find(intval($bk_gid, 10));
-		}
+		$tree = Registry::container()->get(TreeService::class)->find(intval($bk_gid, 10));
+
 		$ssbranch_gen = (int) $this->getPreference($bk_gid . '-ssbranch_level', '3') +1;
 
 		$symbols_file = $this->getPreference($bk_gid . '-symbols_file', 'symbols8.png');
