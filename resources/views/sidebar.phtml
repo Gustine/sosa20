@@ -475,13 +475,6 @@ function find_root_xref($sosa_gid, $user_id)
  */
 function test_sosa_table($indi_xref, $tree)
 {
-	$url_create = route(ModuleAction::class, [
-		'module' => '_sosa20_',
-		'bk_gid' => $tree->id(),      // current gedcom identifier
-		'bk_xref' => $indi_xref,      // current individual xref (we want to go back to this page after processing)
-		'action' => 'Create',
-		] );
-
 	$url_migrate = route(ModuleAction::class, [
 		'module' => '_sosa20_',
 		'bk_gid' => $tree->id(),      // current gedcom identifier
@@ -490,12 +483,12 @@ function test_sosa_table($indi_xref, $tree)
 		] );
 
 	$table_OK = 1;
-	if (!DB::schema()->hasTable('sosa')) {
+	if (!DB::schema()->hasTable('sosa')) { // we verify if "sosa" table exists.
 		$table_OK = 0;
 		echo '<div class = "col-sm-12 wt-page-options-value text-center">';
 		echo I18N::translate('The wt_sosa table does not exist, we need to create it.')
 			. '<br>' . I18N::translate('An error message <span style="background-color: #f8d7da">“There is no active transaction…”</span> will appear. Ignore it and reload the page.')
-			. ' <a href="' .  $url_create . '">'
+			. ' <a href="' .  $url_migrate . '">'
 			. '<br><button class="btn btn-secondary" type="button">' . I18N::translate('continue') . '?</button></a>';
 		echo '</div>';
 	}
@@ -514,6 +507,7 @@ function test_sosa_table($indi_xref, $tree)
 		}
 		echo '</div>';
 	}
+
 	return $table_OK;
 }
 
