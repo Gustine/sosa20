@@ -37,6 +37,7 @@
  │            Registry::container() instead of new UserService()   │
  │            Translation::fromPhpFile                             │
  └─────────────────────────────────────────────────────────────────┘
+ * MR 2026-10 adds a database schema and increases the size of `sosa_xref` to 20 characters, consistent with the webtrees core.
  */
 
 declare(strict_types=1);
@@ -73,8 +74,9 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 	use ModuleCustomTrait;
 	use ModuleSidebarTrait;
 // ┌─ webtrees 2.3 ───────────────────────────────
-	public const CUSTOM_VERSION = '2026.09.25';
+	public const CUSTOM_VERSION = '2026.10.01';
 	public const GITHUB_REPO = 'Gustine/sosa20';
+	public const SOSA_SCHEMA = '3';
 // └──────────────────────────────────────────────
 
 	// Github API URL to get the information about the latest releases
@@ -239,6 +241,21 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 		$user_service = Registry::container()->get(UserService::class);
 		$user = $user_service->find(Auth::id());
 
+		/*
+		   schema 0: the sosa table does not exist
+		   schema 1: biginteger(‘sosa_num’) was introduced in version 2025-05
+		   schema 2: the sosa_user column was introduced in version 2025-06
+		   schema 3: string(‘sosa_xref’, 20)
+		*/
+		$old_schema = $this->getPreference('schema', '0');
+		if ($old_schema === '0') {
+			if (DB::schema()->hasTable('sosa')) {
+				if (DB::schema()->hasColumn('sosa', 'user_id')) $old_schema = '2';
+				else $old_schema = '1';
+			}
+		}
+		$schema = self::SOSA_SCHEMA;
+
 		return view($this->name() . '::sidebar', [
 			'individual' => $individual,
 			'vesta_extended' => $vesta_extended,
@@ -247,6 +264,8 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 			'own_numbers' => (int) $own_numbers,
 			'urlimage' => $urlimage,
 			'user' => $user,
+			'old_schema' => $old_schema,
+			'schema' => $schema,
 		]);
 	}
 
@@ -282,28 +301,6 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 	}
 
 	/**
-	 * The getCreateAction function replies to "action=Create".
-	 *
-	 * title : (required!) the title of the called view
-	 * bk_gid : identifier of the current gedcom
-	 * bk_xref : xref of the current individual (we want to go back to his page after processing)
-	 * @return ResponseInterface
-	 */
-	public function getCreateAction(ServerRequestInterface $request): ResponseInterface
-	{
-		$bk_gid = $request->getQueryParams()['bk_gid'];
-		$bk_xref = $request->getQueryParams()['bk_xref'];
-
-		$tree = Registry::container()->get(TreeService::class)->find(intval($bk_gid, 10));
-
-		return $this->viewResponse($this->name() . '::migration', [
-			'title' => I18N::translate("Creation"),
-			'tree' => $tree,
-			'bk_xref' => $bk_xref,
-		]);
-	}
-
-	/**
 	 * The getMigrateAction function replies to "action=Migrate".
 	 *
 	 * title : (required!) the title of the called view
@@ -318,10 +315,22 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 
 		$tree = Registry::container()->get(TreeService::class)->find(intval($bk_gid, 10));
 
+		$old_schema = $this->getPreference('schema', '0');
+		if ($old_schema === '0') {
+			if (DB::schema()->hasTable('sosa')) {
+				if (DB::schema()->hasColumn('sosa', 'user_id')) $old_schema = '2';
+				else $old_schema = '1';
+			}
+		}
+		$schema = self::SOSA_SCHEMA;
+		$this->setPreference('schema', $schema);
+
 		return $this->viewResponse($this->name() . '::migration', [
 			'title' => I18N::translate("Migration"),
 			'tree' => $tree,
 			'bk_xref' => $bk_xref,
+			'old_schema' => $old_schema,
+			'schema' => $schema,
 		]);
 	}
 
