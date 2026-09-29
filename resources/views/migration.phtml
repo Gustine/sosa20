@@ -2,9 +2,9 @@
 /*
  * …/modules_v4/sosa20/resources/views/migration.phtml
  * help : https://gustine.eu/mode_emploi/sosa.php
- * MR 2025-10 each member uses it own Sosa numbers
+ * MR 2025-10 each member uses its own Sosa numbers.
  * RickM 2025-11 improved wording of messages in English.
- * MR 2026-09 increase sosa_xref from 11 to 20 characters
+ * MR 2026-10 adds a database schema and increases the size of `sosa_xref` to 20 characters, consistent with the webtrees core.
  */
 use Fisharebest\Webtrees\Auth;
 use Fisharebest\Webtrees\Functions\FunctionsPrint; 
@@ -17,58 +17,80 @@ use Fisharebest\Webtrees\View;
 use Illuminate\Database\Capsule\Manager as DB;
 use Illuminate\Database\Schema\Blueprint;
 
-if (!DB::schema()->hasTable('sosa')) {
-	try {
-		DB::schema()->create('sosa', function (Blueprint $table): void {
-			$table->increments('sosa_id');
-			$table->string('sosa_xref', 20);
-			$table->biginteger('sosa_num');
-			$table->integer('sosa_gen');
-			$table->integer('sosa_gid');
-			$table->unique('sosa_id');
-			$table->integer('user_id');
-			});
-		echo I18N::translate('The wt_sosa table does not exist, so we will create it.')  . '<br>';
-	}
-	catch(PDOException $ex) {
-		throw new Exception("⁂ DB already exists. <br>");
+/* 	schema 0: the sosa table does not exist
+	schema 1: biginteger(‘sosa_num’) was introduced in version 2025-05
+	schema 2: the sosa_user column was introduced in version 2025-06
+	schema 3: string(‘sosa_xref’, 20)
+*/
+
+function create3()
+{
+	DB::schema()->create('sosa', function (Blueprint $table): void {
+		$table->increments('sosa_id');
+		$table->string('sosa_xref', 20);
+		$table->biginteger('sosa_num');
+		$table->integer('sosa_gen');
+		$table->integer('sosa_gid');
+		$table->unique('sosa_id');
+		$table->integer('user_id');
+	});
+}
+
+function migrate1($data)
+{ // user_id does not exist (schema 0 or 1 of sosa module) : by default user_id = -1
+	foreach ($data as $datum) {
+		DB::table('sosa')->insert([
+			'sosa_xref' => $datum->sosa_xref,
+			'sosa_num' => $datum->sosa_num,
+			'sosa_gen' => $datum->sosa_gen,
+			'sosa_gid' => $datum->sosa_gid,
+			'sosa_id' => $datum->sosa_id,
+			'user_id' => '-1',
+		]);
 	}
 }
 
-// If sosa table exists, we verify if user_id column exists.
-if (!DB::schema()->hasColumn('sosa', 'user_id')) {
-	// If no user_id (older version of sosa module), we backup data
-       $data = DB::table('sosa')->get();
-	// then drop table
-       DB::schema()->drop('sosa');
-	// and recreate it with new structure.
-	try {
-		DB::schema()->create('sosa', function (Blueprint $table): void {
-			$table->increments('sosa_id');
-			$table->string('sosa_xref', 20);
-			$table->biginteger('sosa_num');
-			$table->integer('sosa_gen');
-			$table->integer('sosa_gid');
-			$table->unique('sosa_id');
-			$table->integer('user_id');
-			});
-		echo I18N::translate('The structure of the wt_sosa table will need to be modified.') . '<br>';
+function migrate2($data)
+{ // user_id exists (schema 2 of sosa module)
+	foreach ($data as $datum) {
+		DB::table('sosa')->insert([
+			'sosa_xref' => $datum->sosa_xref,
+			'sosa_num' => $datum->sosa_num,
+			'sosa_gen' => $datum->sosa_gen,
+			'sosa_gid' => $datum->sosa_gid,
+			'sosa_id' => $datum->sosa_id,
+			'user_id' => $datum->user_id,
+		]);
 	}
-	catch(PDOException $ex) {
-		throw new Exception("⁂ new DB already exists. <br>");
-	}
-	// Finally, the data is restored by assigning it to default user (ID-1).
-       foreach ($data as $datum) {
-           DB::table('sosa')->insert([
-               'sosa_xref' => $datum->sosa_xref,
-               'sosa_num' => $datum->sosa_num,
-               'sosa_gen' => $datum->sosa_gen,
-               'sosa_gid' => $datum->sosa_gid,
-               'sosa_id' => $datum->sosa_id,
-               'user_id' => '-1',
-           ]);
-       }
-   }
+}
+
+switch ($old_schema) {
+	case '0':
+		create3();
+		break;
+	case '1':
+		// First we backup data
+		$data = DB::table('sosa')->get();
+		// then drop table
+		DB::schema()->drop('sosa');
+		// and recreate it with new structure.
+		create3();
+		// Finally, we restore the data.
+		migrate1($data);
+		break;
+	case '2':
+		// First we backup data
+		$data = DB::table('sosa')->get();
+		// then drop table
+		DB::schema()->drop('sosa');
+		// and recreate it with new structure.
+		create3();
+		// Finally, we restore the data.
+		migrate2($data);
+		break;
+	default:
+		break;
+}
 
 echo '<div class="wt-main-wrapper">' ;
 	echo '<table class="table wt-facts-table">';
@@ -78,7 +100,8 @@ echo '<div class="wt-main-wrapper">' ;
 		}
 	else {
 		$individual = Registry::individualFactory()->make($bk_xref, $tree);
-		if ($title === I18N::translate('Migration')) {
+		if ( intval($old_schema) < 2 ) { // This has no effect as long as creating a table triggers the message “There is no active transaction…”.
+		                                 // Since a reload is required, the display then corresponds to $old_schema = '3' :-(
 			echo '<p>' . I18N::translate('The Sosa numbers calculated previously are assigned to the default user. They are visible to unregistered users and only an editor can update them.') . '</p>';
 			echo '<p>' . I18N::translate('Each registered user present in the tree will be able to generate Sosa numbers relating to them (for their direct ancestors).') . '</p>';
 		}

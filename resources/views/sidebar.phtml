@@ -15,6 +15,7 @@
  * RickM 2025-11 improved wording of messages in English.
  * MR 2025-11 when neither vesta-extended-relationship nor relationship-chart are enabled.
  * MR 2026-09 webtrees 2.3 : new syntax ModuleAction for routes.
+ * MR 2026-10 adds a database schema and increases the size of `sosa_xref` to 20 characters, consistent with the webtrees core.
  */
 
 use Fisharebest\Webtrees\Auth;
@@ -130,7 +131,7 @@ $url_help = route(ModuleAction::class, [
 
 /***** First we check that the sosa table exists, otherwise, you are prompted to create it
        (after being informed of the unexpected error message that will appear). *****/
-if (test_sosa_table($indi_xref, $tree)) {
+if (test_sosa_table($indi_xref, $tree, $old_schema, $schema)) {
 	$default_root_xref = $tree->getPreference('PEDIGREE_ROOT_ID'); // xref of the default individual of the current gedcom
 
 	if ($own_numbers === 1) {
@@ -381,7 +382,7 @@ function admin_sosa_table($indi_xref, $ged_id, $sosa_root_xref, $tree, $user_id)
 		echo '<a href="' . $url_update . '"><i>' . I18N::translate('Family tree #') . $ged_id . '</i></a> ';
 		echo I18N::translate('using %s as Sosa 1', $sosa_root->FullName()) . '&nbsp;?';
 	}
-	if (find_root_xref($ged_id, $user_id) !== $sosa_root_xref) echo '<br><small>(' . I18N::translate('The Sosa table is empty.') . ')</small>';
+	if (find_root_xref($ged_id, $user_id) !== $sosa_root_xref) echo '<br><small>(<span style="background-color: #f8d7da">' . I18N::translate('The Sosa table is empty.') . '</span>)</small>';
 	echo '</div>';
 }
 
@@ -473,7 +474,7 @@ function find_root_xref($sosa_gid, $user_id)
  * If sosa table exists, tests if user_id column exists. If not, recreates it with new structure.
  * $tree and $indi_xref will return to the page of the current individual.
  */
-function test_sosa_table($indi_xref, $tree)
+function test_sosa_table($indi_xref, $tree, $old_schema, $schema)
 {
 	$url_migrate = route(ModuleAction::class, [
 		'module' => '_sosa20_',
@@ -483,7 +484,7 @@ function test_sosa_table($indi_xref, $tree)
 		] );
 
 	$table_OK = 1;
-	if (!DB::schema()->hasTable('sosa')) { // we verify if "sosa" table exists.
+	if ($old_schema == '0') { // sosa table does not exist
 		$table_OK = 0;
 		echo '<div class = "col-sm-12 wt-page-options-value text-center">';
 		echo I18N::translate('The wt_sosa table does not exist, we need to create it.')
@@ -493,8 +494,7 @@ function test_sosa_table($indi_xref, $tree)
 		echo '</div>';
 	}
 
-	/* If sosa table exists, we verify if user_id column exists. */
-	else if (!DB::schema()->hasColumn('sosa', 'user_id')) {
+	else if ( intval($old_schema) < intval($schema) ) { // the structure needs to be modified
 		$table_OK = 0;
 		echo '<div class = "col-sm-12 wt-page-options-value text-center">';
 		echo I18N::translate('The structure of the wt_sosa table needs to be modified.')
