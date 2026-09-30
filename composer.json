@@ -1,8 +1,8 @@
 {
-    "version": "2026.10.01",
-    "time": "2026-10-01",
+    "version": "2026.09.30",
+    "time": "2026-09-30",
     "conflict": {
-        "fisharebest/webtrees": ">=2.3.0"
+        "fisharebest/webtrees": "<2.3.0"
     },
     "name": "gustine/sosa20",
     "description": "A sidebar showing Sosa-Stradonitz number of individuals.",

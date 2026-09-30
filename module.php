@@ -31,21 +31,15 @@
  * MR 2025-11 when neither vesta_extended_relationship nor relationship-chart are enabled.
  * MR 2025-12 when memory_limit == -1 (no limit).
  * MR 2026-01 when vesta_extended_relationship is enabled but vesta_common is disabled.
- ┌─────────────────────────────────────────────────────────────────┐
- │ MR 2026-09 webtrees 2.3 compatibility update                    │
- │            latest-version.txt instead of GuzzleHttp             │
- │            Registry::container() instead of new UserService()   │
- │            Translation::fromPhpFile                             │
- └─────────────────────────────────────────────────────────────────┘
- * MR 2026-10 adds a database schema and increases the size of `sosa_xref` to 20 characters, consistent with the webtrees core.
+ * MR 2026-09 adds a database schema and increases the size of `sosa_xref` to 20 characters, consistent with the webtrees core.
  */
 
 declare(strict_types=1);
 
 use Fig\Http\Message\StatusCodeInterface;
+use Fisharebest\Localization\Translation;
 use Fisharebest\Webtrees\FlashMessages;
 use Fisharebest\Webtrees\I18N;
-use Fisharebest\Webtrees\I18N\Translation;
 use Fisharebest\Webtrees\Individual;
 use Fisharebest\Webtrees\Module\AbstractModule;
 use Fisharebest\Webtrees\Module\ModuleConfigInterface;
@@ -73,8 +67,8 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 	use ModuleConfigTrait;
 	use ModuleCustomTrait;
 	use ModuleSidebarTrait;
-// ┌─ webtrees 2.3 ───────────────────────────────
-	public const CUSTOM_VERSION = '2026.10.01';
+// ┌─ webtrees 2.0 to 2.2 ────────────────────────
+	public const CUSTOM_VERSION = '2026.09.30';
 	public const GITHUB_REPO = 'Gustine/sosa20';
 	public const SOSA_SCHEMA = '3';
 // └──────────────────────────────────────────────
@@ -288,7 +282,12 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 		$up_xref = $request->getQueryParams()['up_xref'];
 		$user_id = $request->getQueryParams()['user_id'];
 
-		$tree = Registry::container()->get(TreeService::class)->find(intval($bk_gid, 10));
+		if (version_compare(Webtrees::VERSION, '2.2.0', '>=')) {
+			$tree = Registry::container()->get(TreeService::class)->find(intval($bk_gid, 10));
+		}
+		else {
+			$tree = app(TreeService::class)->find(intval($bk_gid, 10));
+		}
 
 		return $this->viewResponse($this->name() . '::update', [
 			'title' => I18N::translate("Updating Sosa numbers"),
@@ -313,8 +312,11 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 		$bk_gid = $request->getQueryParams()['bk_gid'];
 		$bk_xref = $request->getQueryParams()['bk_xref'];
 
-		$tree = Registry::container()->get(TreeService::class)->find(intval($bk_gid, 10));
-
+		if (version_compare(Webtrees::VERSION, '2.2.0', '>=')) {
+			$tree = Registry::container()->get(TreeService::class)->find(intval($bk_gid, 10));
+		} else {
+			$tree = app(TreeService::class)->find(intval($bk_gid, 10));
+		}
 		$old_schema = $this->getPreference('schema', '0');
 		if ($old_schema === '0') {
 			if (DB::schema()->hasTable('sosa')) {
@@ -350,8 +352,11 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 		$bk_gid = $request->getQueryParams()['bk_gid'];
 		$bk_xref = $request->getQueryParams()['bk_xref'];
 
-		$tree = Registry::container()->get(TreeService::class)->find(intval($bk_gid, 10));
-
+		if (version_compare(Webtrees::VERSION, '2.2.0', '>=')) {
+			$tree = Registry::container()->get(TreeService::class)->find(intval($bk_gid, 10));
+		} else {
+			$tree = app(TreeService::class)->find(intval($bk_gid, 10));
+		}
 		$ssbranch_gen = (int) $this->getPreference($bk_gid . '-ssbranch_level', '3') +1;
 
 		$symbols_file = $this->getPreference($bk_gid . '-symbols_file', 'symbols8.png');
@@ -460,18 +465,18 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 		$tree_id = $params['tree-id'];
 		$this->setPreference('last-tree-id', $tree_id);
 
-        if ($params['refresh'] === '1') {
-            $this->setPreference($tree_id . '-reset_param', $params['reset_param'] ?? '0');
-         }
-	if ($params['save'] === '1') {
-		$this->setPreference($tree_id . '-reset_param', '0');
-		$this->setPreference($tree_id . '-ssbranch_level', $params['ssbranch_level']);
-		$this->setPreference($tree_id . '-symbols_file', $params['symbols_file']);
-		$this->setPreference($tree_id . '-own_numbers', $params['own_numbers']);
-		$this->setPreference($tree_id . '-profile_file', $params['profile_file']);
+		if ($params['refresh'] === '1') {
+			$this->setPreference($tree_id . '-reset_param', $params['reset_param'] ?? '0');
+		}
+		if ($params['save'] === '1') {
+			$this->setPreference($tree_id . '-reset_param', '0');
+			$this->setPreference($tree_id . '-ssbranch_level', $params['ssbranch_level']);
+			$this->setPreference($tree_id . '-symbols_file', $params['symbols_file']);
+			$this->setPreference($tree_id . '-own_numbers', $params['own_numbers']);
+			$this->setPreference($tree_id . '-profile_file', $params['profile_file']);
 
-		$message = I18N::translate('The settings for the family tree “%s” have been updated.', $this->title());
-		FlashMessages::addMessage($message, 'success');
+			$message = I18N::translate('The settings for the family tree “%s” have been updated.', $this->title());
+			FlashMessages::addMessage($message, 'success');
 		}
 
 		return redirect($this->getConfigLink());
@@ -484,19 +489,17 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 	 * @return array
 	 */
 	public function customTranslations(string $language): array
-    {
-		$langPhpFile = $this->resourcesFolder() . 'lang/' . $language . '.php';
-		if (is_readable($langPhpFile)) {
-			return Translation::fromPhpFile($langPhpFile)->toArray();
-		}
-		return [];
+	{
+		$file = $this->resourcesFolder() . 'lang/' . $language . '.php';
+
+		return file_exists($file) ? (new Translation($file))->asArray() : [];
 	}
 
 }; // end class
 
-if (version_compare(Webtrees::VERSION, '2.3', '<')) {
-	FlashMessages::addMessage('This version of module ’sosa20’ requires webtrees ≥ 2.3. Use 2025.12.17 instead.', 'success');
-	return;
+if (version_compare(Webtrees::VERSION, '2.2.0', '>=')) {
+	return Registry::container()->get(SosaModule::class);
 }
-
-return Registry::container()->get(SosaModule::class);
+else {
+	return app(SosaModule::class);
+}

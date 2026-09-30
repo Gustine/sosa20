@@ -3,13 +3,11 @@
 🇫🇷 https://gustine.eu/mode_emploi/sosa.php
 
 ───────────────────────
-sosa20-module-2026-10.zip
+sosa20-module-2026-09.zip
 
-🇬🇧 webtrees 2.3 compatibility update.
-Also adds a database schema and increases the size of `sosa_xref` to 20 characters to be consistent with the webtrees core.
+🇬🇧 Adds a database schema and increases the size of `sosa_xref` to 20 characters to be consistent with the webtrees core.
 
-🇫🇷 mise à jour pour webtrees 2.3.
-Ajoute aussi un schéma de base de données et augmente la taille de `sosa_xref` à 20 caractères en cohérence avec le cœur de webtrees.
+🇫🇷 Ajoute un schéma de base de données et augmente la taille de `sosa_xref` à 20 caractères en cohérence avec le cœur de webtrees.
 
 ───────────────────────
 sosa20-module-2025-12.zip
