@@ -14,13 +14,11 @@
  * MR 2025-11 the ssbranch_gen and own_numbers parameters now determine the display, rather than the presence of symbols.png or image.webp.
  * RickM 2025-11 improved wording of messages in English.
  * MR 2025-11 when neither vesta-extended-relationship nor relationship-chart are enabled.
- * MR 2026-09 webtrees 2.3 : new syntax ModuleAction for routes.
- * MR 2026-10 adds a database schema and increases the size of `sosa_xref` to 20 characters, consistent with the webtrees core.
+ * MR 2026-09 adds a database schema and increases the size of `sosa_xref` to 20 characters, consistent with the webtrees core.
  */
 
 use Fisharebest\Webtrees\Auth;
 use Fisharebest\Webtrees\Functions\FunctionsPrint;
-use Fisharebest\Webtrees\Http\RequestHandlers\ModuleAction;
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
 use Fisharebest\Webtrees\Registry;
@@ -122,7 +120,7 @@ $ged_id1 = $tree->id(); // current gedcom1 identifier
 if ($user !== null) $user_id = $user->id(); else $user_id = -1; // default user if not signed in
 $indi_xref = $individual->Xref(); // current individual xref
 $url_base = explode("individual", $individual->url()); // beginning of the url to be used for relationships charts (https://…/tree/gedcom/)
-$url_help = route(ModuleAction::class, [
+$url_help = route('module', [
 	'module' => '_sosa20_',
 	'bk_gid' => $tree->id(),      // current gedcom identifier
 	'bk_xref' => $indi_xref,      // current individual xref (we want to go back to this page after reading)
@@ -366,7 +364,7 @@ if (test_sosa_table($indi_xref, $tree, $old_schema, $schema)) {
  */
 function admin_sosa_table($indi_xref, $ged_id, $sosa_root_xref, $tree, $user_id)
 {
-	$url_update = route(ModuleAction::class, [
+	$url_update = route('module', [
 		'module' => '_sosa20_',
 		'bk_gid' => $tree->id(),      // current gedcom identifier
 		'bk_xref' => $indi_xref,      // current individual xref (we want to go back to this page after processing)
@@ -476,7 +474,7 @@ function find_root_xref($sosa_gid, $user_id)
  */
 function test_sosa_table($indi_xref, $tree, $old_schema, $schema)
 {
-	$url_migrate = route(ModuleAction::class, [
+	$url_migrate = route('module', [
 		'module' => '_sosa20_',
 		'bk_gid' => $tree->id(),      // current gedcom identifier
 		'bk_xref' => $indi_xref,      // current individual xref (we want to go back to this page after processing)
