@@ -31,13 +31,13 @@
  * MR 2025-11 when neither vesta_extended_relationship nor relationship-chart are enabled.
  * MR 2025-12 when memory_limit == -1 (no limit).
  * MR 2026-01 when vesta_extended_relationship is enabled but vesta_common is disabled.
+ * MR 2026-09 adds a database schema and increases the size of `sosa_xref` to 20 characters, consistent with the webtrees core.
  ┌─────────────────────────────────────────────────────────────────┐
- │ MR 2026-09 webtrees 2.3 compatibility update                    │
+ │ MR 2026-10 webtrees 2.3 compatibility update                    │
  │            latest-version.txt instead of GuzzleHttp             │
  │            Registry::container() instead of new UserService()   │
  │            Translation::fromPhpFile                             │
  └─────────────────────────────────────────────────────────────────┘
- * MR 2026-10 adds a database schema and increases the size of `sosa_xref` to 20 characters, consistent with the webtrees core.
  */
 
 declare(strict_types=1);
@@ -460,18 +460,18 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 		$tree_id = $params['tree-id'];
 		$this->setPreference('last-tree-id', $tree_id);
 
-        if ($params['refresh'] === '1') {
-            $this->setPreference($tree_id . '-reset_param', $params['reset_param'] ?? '0');
-         }
-	if ($params['save'] === '1') {
-		$this->setPreference($tree_id . '-reset_param', '0');
-		$this->setPreference($tree_id . '-ssbranch_level', $params['ssbranch_level']);
-		$this->setPreference($tree_id . '-symbols_file', $params['symbols_file']);
-		$this->setPreference($tree_id . '-own_numbers', $params['own_numbers']);
-		$this->setPreference($tree_id . '-profile_file', $params['profile_file']);
+		if ($params['refresh'] === '1') {
+			$this->setPreference($tree_id . '-reset_param', $params['reset_param'] ?? '0');
+		}
+		if ($params['save'] === '1') {
+			$this->setPreference($tree_id . '-reset_param', '0');
+			$this->setPreference($tree_id . '-ssbranch_level', $params['ssbranch_level']);
+			$this->setPreference($tree_id . '-symbols_file', $params['symbols_file']);
+			$this->setPreference($tree_id . '-own_numbers', $params['own_numbers']);
+			$this->setPreference($tree_id . '-profile_file', $params['profile_file']);
 
-		$message = I18N::translate('The settings for the family tree “%s” have been updated.', $this->title());
-		FlashMessages::addMessage($message, 'success');
+			$message = I18N::translate('The settings for the family tree “%s” have been updated.', $this->title());
+			FlashMessages::addMessage($message, 'success');
 		}
 
 		return redirect($this->getConfigLink());
@@ -484,7 +484,7 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 	 * @return array
 	 */
 	public function customTranslations(string $language): array
-    {
+	{
 		$langPhpFile = $this->resourcesFolder() . 'lang/' . $language . '.php';
 		if (is_readable($langPhpFile)) {
 			return Translation::fromPhpFile($langPhpFile)->toArray();
@@ -495,7 +495,7 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 }; // end class
 
 if (version_compare(Webtrees::VERSION, '2.3', '<')) {
-	FlashMessages::addMessage('This version of module ’sosa20’ requires webtrees ≥ 2.3. Use 2025.12.17 instead.', 'success');
+	FlashMessages::addMessage('This version of module ’sosa20’ requires webtrees ≥ 2.3. Use https://github.com/Gustine/sosa20/releases/tag/2026.09.30 instead.', 'success');
 	return;
 }
 
