@@ -32,8 +32,9 @@
  * MR 2025-12 when memory_limit == -1 (no limit).
  * MR 2026-01 when vesta_extended_relationship is enabled but vesta_common is disabled.
  * MR 2026-09 adds a database schema and increases the size of `sosa_xref` to 20 characters, consistent with the webtrees core.
+ * MR 2026-11 error when web crawlers try to access the help page of a private tree.
  ┌─────────────────────────────────────────────────────────────────┐
- │ MR 2026-10 webtrees 2.3 compatibility update                    │
+ │ MR 2026-11 webtrees 2.3 compatibility update                    │
  │            latest-version.txt instead of GuzzleHttp             │
  │            Registry::container() instead of new UserService()   │
  │            Translation::fromPhpFile                             │
@@ -41,8 +42,10 @@
  */
 
 declare(strict_types=1);
+namespace Fisharebest\Webtrees;
 
 use Fig\Http\Message\StatusCodeInterface;
+use Fisharebest\Webtrees\Auth;
 use Fisharebest\Webtrees\FlashMessages;
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\I18N\Translation;
@@ -60,10 +63,10 @@ use Fisharebest\Webtrees\Services\UserService;
 use Fisharebest\Webtrees\View;
 use Fisharebest\Webtrees\Tree;
 use Fisharebest\Webtrees\Webtrees;
-use Fisharebest\Webtrees\Auth;
 use Illuminate\Database\Capsule\Manager as DB;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Throwable;
 
 /**
  * A sidebar to show Sosa-Stradonitz informations of an individual
@@ -74,7 +77,7 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 	use ModuleCustomTrait;
 	use ModuleSidebarTrait;
 // ┌─ webtrees 2.3 ───────────────────────────────
-	public const CUSTOM_VERSION = '2026.10.01';
+	public const CUSTOM_VERSION = '2026.11.07';
 	public const GITHUB_REPO = 'Gustine/sosa20';
 	public const SOSA_SCHEMA = '3';
 // └──────────────────────────────────────────────
@@ -346,43 +349,47 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 	 */
 	public function getHelpAction(ServerRequestInterface $request): ResponseInterface
 	{
-		// Back to previous page
-		$bk_gid = $request->getQueryParams()['bk_gid'];
-		$bk_xref = $request->getQueryParams()['bk_xref'];
+		try { // some web crawlers try to access this page directly
+			// Back to previous page
+			$bk_gid = $request->getQueryParams()['bk_gid'];
+			$bk_xref = $request->getQueryParams()['bk_xref'];
 
-		$tree = Registry::container()->get(TreeService::class)->find(intval($bk_gid, 10));
+			$tree = Registry::container()->get(TreeService::class)->find(intval($bk_gid, 10));
 
-		$ssbranch_gen = (int) $this->getPreference($bk_gid . '-ssbranch_level', '3') +1;
+			$ssbranch_gen = (int) $this->getPreference($bk_gid . '-ssbranch_level', '3') +1;
 
-		$symbols_file = $this->getPreference($bk_gid . '-symbols_file', 'symbols8.png');
-		if ( ($symbols_file !== '') && file_exists(__DIR__ . '/resources/img/' . $symbols_file) ) $urlsymbols = $this->assetUrl('img/' . $symbols_file);
-		else $urlsymbols = '';
+			$symbols_file = $this->getPreference($bk_gid . '-symbols_file', 'symbols8.png');
+			if ( ($symbols_file !== '') && file_exists(__DIR__ . '/resources/img/' . $symbols_file) ) $urlsymbols = $this->assetUrl('img/' . $symbols_file);
+			else $urlsymbols = '';
 
-		$own_numbers = $this->getPreference($bk_gid . '-own_numbers', '1');
+			$own_numbers = $this->getPreference($bk_gid . '-own_numbers', '1');
 
-		$profile_file = $this->getPreference($bk_gid . '-profile_file', 'image.webp');
-		if ( ($profile_file !== '') && file_exists(__DIR__ . '/resources/img/' . $profile_file) ) $urlimage = $this->assetUrl('img/' . $profile_file);
-		else $urlimage = '';
+			$profile_file = $this->getPreference($bk_gid . '-profile_file', 'image.webp');
+			if ( ($profile_file !== '') && file_exists(__DIR__ . '/resources/img/' . $profile_file) ) $urlimage = $this->assetUrl('img/' . $profile_file);
+			else $urlimage = '';
 
-		// Get the signed in user
-		$user_service = Registry::container()->get(UserService::class);
-		$user = $user_service->find(Auth::id());
+			// Get the signed in user
+			$user_service = Registry::container()->get(UserService::class);
+			$user = $user_service->find(Auth::id());
 
-		// Check for help.png
-		if ( file_exists(__DIR__ . '/resources/img/help.png') ) $urlhelp = $this->assetUrl('img/help.png');
-		else $urlhelp = '';
+			// Check for help.png
+			if ( file_exists(__DIR__ . '/resources/img/help.png') ) $urlhelp = $this->assetUrl('img/help.png');
+			else $urlhelp = '';
 
-		return $this->viewResponse($this->name() . '::help', [
-			'title' => I18N::translate("Help"),
-			'tree' => $tree,
-			'ssbranch_gen' => $ssbranch_gen,
-			'urlsymbols' => $urlsymbols,
-			'own_numbers' => (int) $own_numbers,
-			'urlimage' => $urlimage,
-			'urlhelp' => $urlhelp,
-			'user' => $user,
-			'bk_xref' => $bk_xref,
-		]);
+			return $this->viewResponse($this->name() . '::help', [
+				'title' => I18N::translate("Help"),
+				'tree' => $tree,
+				'ssbranch_gen' => $ssbranch_gen,
+				'urlsymbols' => $urlsymbols,
+				'own_numbers' => (int) $own_numbers,
+				'urlimage' => $urlimage,
+				'urlhelp' => $urlhelp,
+				'user' => $user,
+				'bk_xref' => $bk_xref,
+			]);
+		} catch (Throwable) {
+			return $this->viewResponse($this->name() . '::help', ['title' => I18N::translate("Help") . " → 403",]);
+		}
 	}
 
 	/**
@@ -399,7 +406,7 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 
 		try {
 			$tree = $this->tree_service->find((int)$tree_id);
-		} catch (Exception $ex) {
+		} catch (Throwable $ex) {
 			// the last tree saved doesn't exist anymore. Use the first tree instead.
 			$tree = $this->tree_service->all()->first();
 			$tree_id = $tree->id();
