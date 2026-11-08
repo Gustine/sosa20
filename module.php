@@ -32,12 +32,15 @@
  * MR 2025-12 when memory_limit == -1 (no limit).
  * MR 2026-01 when vesta_extended_relationship is enabled but vesta_common is disabled.
  * MR 2026-09 adds a database schema and increases the size of `sosa_xref` to 20 characters, consistent with the webtrees core.
+ * MR 2026-11 error when web crawlers try to access the help page of a private tree.
  */
 
 declare(strict_types=1);
+namespace Fisharebest\Webtrees;
 
 use Fig\Http\Message\StatusCodeInterface;
 use Fisharebest\Localization\Translation;
+use Fisharebest\Webtrees\Auth;
 use Fisharebest\Webtrees\FlashMessages;
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
@@ -54,10 +57,10 @@ use Fisharebest\Webtrees\Services\UserService;
 use Fisharebest\Webtrees\View;
 use Fisharebest\Webtrees\Tree;
 use Fisharebest\Webtrees\Webtrees;
-use Fisharebest\Webtrees\Auth;
 use Illuminate\Database\Capsule\Manager as DB;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Throwable;
 
 /**
  * A sidebar to show Sosa-Stradonitz informations of an individual
@@ -68,7 +71,7 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 	use ModuleCustomTrait;
 	use ModuleSidebarTrait;
 // ┌─ webtrees 2.0 to 2.2 ────────────────────────
-	public const CUSTOM_VERSION = '2026.09.30';
+	public const CUSTOM_VERSION = '2026.11.07';
 	public const GITHUB_REPO = 'Gustine/sosa20';
 	public const SOSA_SCHEMA = '3';
 // └──────────────────────────────────────────────
@@ -347,7 +350,8 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 	 * @return ResponseInterface
 	 */
 	public function getHelpAction(ServerRequestInterface $request): ResponseInterface
-	{
+{
+	try { // some web crawlers try to access this page directly
 		// Back to previous page
 		$bk_gid = $request->getQueryParams()['bk_gid'];
 		$bk_xref = $request->getQueryParams()['bk_xref'];
@@ -388,7 +392,10 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 			'user' => $user,
 			'bk_xref' => $bk_xref,
 		]);
+	} catch (Throwable) {
+		return $this->viewResponse($this->name() . '::help', ['title' => I18N::translate("Help") . " → 403",]);
 	}
+}
 
 	/**
 	 * This administration page can be accessed from Control panel / All modules
@@ -404,7 +411,7 @@ class SosaModule extends AbstractModule implements ModuleConfigInterface, Module
 
 		try {
 			$tree = $this->tree_service->find((int)$tree_id);
-		} catch (Exception $ex) {
+		} catch (Throwable $ex) {
 			// the last tree saved doesn't exist anymore. Use the first tree instead.
 			$tree = $this->tree_service->all()->first();
 			$tree_id = $tree->id();
